@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Imagen destacada feature.
+ */
+
+include_once 'imagen_destacada.features.inc';

@@ -1,0 +1,271 @@
+<?php
+
+/*
+ * Implementation of Hook_block_info()
+ */
+function aventure_testimonies_content_block_info() {
+
+	$blocks['user_testimonies'] = array(
+		'info' => t('Aventure testimony realted block')
+	);
+
+  $blocks['another_testimonies'] = array(
+    'info' => t('Aventure another testimonies')
+  );
+
+  return $blocks;
+}
+
+/**
+ *  Implementation of hook_block_view().
+ */
+function aventure_testimonies_content_block_view($delta = '') {
+  $block = NULL;
+
+	switch ($delta) {
+		case 'user_testimonies':
+			$block['subject'] = t('Aventure testimony related block');
+			$node = menu_get_object();
+			$renderable_array = aventure_testimonies_get_content_by_user($node->uid);
+			$block['content'] = render($renderable_array);
+			break;
+
+    case 'another_testimonies':
+      $block['subject'] = t('Aventure another testimonies');
+      $renderable_array = aventure_testimonies_get_another();
+      $block['content'] = render($renderable_array);
+      break;
+	}
+
+	return $block;
+}
+
+/**
+ *  Implementation of hook_theme().
+ */
+function aventure_testimonies_content_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_user_testimonies' => array(
+      'variables' => array(),
+      'template' => 'user_testimonies_block',
+      'path' => $path . '/templates',
+    ),
+    'aventure_more_testimonies' => array(
+      'variables' => array(),
+      'template' => 'more_random_testimonies',
+      'path' => $path . '/templates',
+    ),
+    'aventure_autor_testimonies' => array(
+      'variables' => array(),
+      'template' => 'autor_testimonies',
+      'path' => $path . '/templates',
+    )
+  );
+}
+
+function aventure_testimonies_get_another() {
+  $current_node = menu_get_object();
+  $nodes = aventure_testimonies_get_random_testimonies($current_node->nid);
+
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="more-testimonies">',
+    '#title' => '<h2>' . t('Listen another travelers from Aventure Colombia') . '</h2>'
+  );
+
+  foreach ($nodes as $node) {
+    $node = node_load($node->nid);
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+    // Load author
+    $user = user_load($node->uid);
+    
+    $iso_country = isset($user->field_user_country['und'][0]['country']) ? $user->field_user_country['und'][0]['country'] : NULL;
+    //uso de funcion del modulo countryicons
+    $path = countryicons_get_icon_path($iso_country);
+    $user_image_country = theme_image(array('path' => $path, 'attributes' => array('class' => array('country-icon'))));
+
+    $user_pic = theme_image(array(
+      'path' => image_style_url('89x89', @$user->picture->uri),
+      'alt' => $node_wrapper->title->value(),
+      'title' => $node_wrapper->title->value()
+    ));
+
+    if (isset($node->field_trip_rating['und'][0])) {
+      $variables = array(
+        'rating' => $node->field_trip_rating['und'][0]['rating'] ? $node->field_trip_rating['und'][0]['rating'] : NULL, 
+        'stars' => '5', 
+        'target' => $node->field_trip_rating['und'][0]['target'],
+      );
+    } else {
+      $variables = array(
+        'rating' => 0, 
+        'stars' => '5', 
+        'target' => NULL,
+      );
+    }
+    $rating = theme('fivestar_static', $variables);
+
+
+    $render['testimony-' . $node->nid] = array(
+      '#markup' => theme('aventure_more_testimonies', array(
+          'user_image' => $user_pic,
+          'user_image_country' => $user_image_country,
+          'user_name' => l($user->name,  'node/' . $node_wrapper->nid->value(), array(
+              'attributes' => array(
+                'title' => $node->title
+              )
+            )
+          ),
+          'subtitle' => format_date($node_wrapper->created->value(), 'custom', 'd \d\e F  \d\e Y'),
+          'highlighted_phrase' => $node_wrapper->field_highlighted_phrase->value(),
+          'rating' => $rating,
+        )
+      )
+    );
+  }
+
+  $render['end_wrapper'] = array(
+    '#sufix' => '</div>',
+  );
+
+  return $render;
+}
+
+function  aventure_testimonies_get_content_by_user($uid) {
+
+  $nodes = aventure_testimonies_get_testimonies_by_user($uid);
+
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="more-testimonies">',
+  );
+
+  foreach ($nodes as $node) {
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+
+    $photo_image = $node_wrapper->field_images[0]->value();
+    $path_to_image_style = image_style_url('176x177', $photo_image['uri']);
+  
+    $node_image = theme_image(array('path' => $path_to_image_style));
+    $node_name = $node_wrapper->title->value();
+
+    $node_image_link = l($node_image, 'node/' . $node_wrapper->nid->value(), array(
+            'html' => TRUE,  
+            'attributes' => array(
+              'title' => $node_name
+            )
+          )
+        );
+
+    $render['testimonies_' . $node->nid] = array(
+      '#markup' => theme('aventure_user_testimonies', array(
+          'image_link' => $node_image_link,
+          'place'
+        )
+      )
+    );
+  }
+
+  $render['end_wrapper'] = array(
+    '#suffix' => '</div>',
+  );
+
+  return $render;
+}
+
+/**
+*		Return user testimonies nodes by user 
+*/
+function aventure_testimonies_get_testimonies_by_user($uid) {
+
+	$query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'testimony')
+    //->propertyCondition('status', 1)
+    ->propertyCondition('uid', $uid)
+    ->range(0, 3);
+
+  $result = $query->execute();
+  $nodes = array();
+
+  if (isset($result['node'])) {
+    $nids = array_keys($result['node']);
+    $nodes = entity_load('node', $nids);
+  }
+
+  return $nodes;
+}
+
+/**
+*   Return random user testimonies
+*/
+function aventure_testimonies_get_random_testimonies($nid, $limit = 3) {
+
+  $query = db_select('node', 'n')
+          ->fields('n', array('nid'))
+          //->condition('status', 1, '=')
+          ->condition('type', 'testimony', '=')
+          ->condition('nid', $nid, '!=')
+          ->orderRandom()
+          ->range(0, $limit);
+
+  return $query->execute()->fetchAll(PDO::FETCH_OBJ);
+}
+
+
+/**
+ *  Implements hook_node_view().
+ */
+function aventure_testimonies_content_node_view($node, $view_mode, $langcode) {
+  switch ($node->type) {
+    case 'testimony':
+      $node->content['traveler'] = array(
+        '#weight' => 1,
+        '#markup' => aventure_testimonies_content_user($node),
+      );
+      // Alter field_highlighted_phrase
+      $phrase = $node->field_highlighted_phrase['und'][0]['value'];
+      $field_highlighted_phrase = array(
+        '#markup' => '<div class="flexslider_strong_points"> <ul><li> <div> <p> '. $phrase .' </p> </div> </li></ul> </div>',
+      );
+      $node->content['field_highlighted_phrase'] = $field_highlighted_phrase;
+      drupal_add_js("jQuery(document).ready(function(){
+        jQuery('.flexslider_strong_points li div p').wrapInner('<span>');
+      });",'inline');
+      break;
+    
+    default:
+      # code...
+      break;
+  }
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function aventure_testimonies_content_field_extra_fields() {
+  $extra['node']['testimony'] = array(
+    'display' => array(
+      'traveler' => array(
+        'label' => t('Traveler'), 
+        'description' => t('Info traveler'), 
+        'weight' => 0,
+      ),
+    ),
+  );
+  return $extra;
+}
+
+/**
+ * Funcion que retorna el encabezado del usuario
+ */
+function aventure_testimonies_content_user($node) {
+  $uid = $node->uid;
+  $user = user_load($uid);
+  $autor_title = $node->title;
+  $autor_name = isset ($user->field_user_name['und'][0]['value']) ? $user->field_user_name['und'][0]['value'] : $user->name;
+  $image_autor = theme('user_picture', array('account' =>$user, 'style_name' => '78x78'));
+  $iso_country = isset($user->field_user_country['und'][0]['country']) ? $user->field_user_country['und'][0]['country'] : NULL;
+  //uso de funcion del modulo countryicons
+  $path = countryicons_get_icon_path($iso_country);
+  $image_icon_county = theme_image(array('path' => $path, 'attributes' => array('class' => array('country-icon'))));
+  return theme('aventure_autor_testimonies', array('image_autor' => $image_autor, 'image_icon_county' => $image_icon_county, 'autor_name' => $autor_name, 'autor_title' =>$autor_title));
+}

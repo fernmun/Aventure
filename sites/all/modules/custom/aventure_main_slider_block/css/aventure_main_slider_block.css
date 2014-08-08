@@ -1,0 +1,77 @@
+/*#block-aventure-main-slider-block-main-slider-home{
+  position: relative;
+}
+#block-aventure-main-slider-block-main-slider-home ul.flex-direction-nav {
+  position: absolute;
+  top: 45%;
+  width: 98.6%;
+}
+#block-aventure-main-slider-block-main-slider-home li {
+  list-style: none;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada {
+  height: 750px;
+}
+#block-aventure-main-slider-block-main-slider-home li .slider_body {
+color: #fff;
+display: block;
+font-weight: 100;
+position: relative;
+top: 176px;
+width: 100%;
+max-width: 1140px;
+margin: auto;
+}
+#block-aventure-main-slider-block-main-slider-home li .slider_image {
+position: relative;
+}
+#block-aventure-main-slider-block-main-slider-home ol.flex-control-nav{
+  display: none;
+}
+#block-aventure-main-slider-block-main-slider-home .flex-direction-nav li a{
+  background: url(../images/slider_arrows.png) no-repeat;
+  display: block;
+  font-size: 0;
+  height: 97px;
+  width: 32px;
+  position: absolute;
+}
+#block-aventure-main-slider-block-main-slider-home li a.flex-prev{
+  left: 25px;
+}
+#block-aventure-main-slider-block-main-slider-home li a.flex-next{
+  background-position: -30px 0px; 
+  right: 25px;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_body{
+  color: #fff;
+  display: block;
+  font-weight: 100;
+  position: relative;
+  top: 110px;
+  text-align: center;
+  margin:auto;
+  width: 1140px;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_subtitle,
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada  .slider_title{
+  font-size: 49px;
+  letter-spacing: 2px;
+  text-shadow: 3px 2px 8px #000;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_subtitle{
+  font-size: 19px;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_description{
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin: 200px auto 0 auto;
+  width: 400px;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_price{
+  background: url(../images/shadow_img.png);
+  border: 2px solid #A98354;
+  display: inline-block;
+  margin: 22px auto 0 auto;
+  padding: 4px 29px;
+}*/

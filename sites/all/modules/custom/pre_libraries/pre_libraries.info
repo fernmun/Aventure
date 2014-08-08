@@ -1,0 +1,4 @@
+name = Libraries
+description = Libraries being used in pre event.
+package = Aventure
+core = 7.x

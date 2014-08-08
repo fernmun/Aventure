@@ -1,0 +1,290 @@
+<?php
+
+/**
+ * Implements hook_taxonomy_term_view().
+ * 'Lugar_string' is the view mode for the place vocabulary separated by commas.
+ */
+function aventure_view_modes_taxonomy_term_view($term, $view_mode, $langcode) {
+  switch ($view_mode) {
+    case 'lugar_string':
+      $term->content['full_term']['#markup'] =
+        t('Hotel in ') . get_full_taxonomy_family_separated_by_commas($term->tid, $term->name);
+      $term->name = '';
+      break;
+
+    case 'icono_servicios':
+      $term->content['icono_servicios']['#markup'] =
+        get_service_icon_render($term);
+      $term->name = '';
+      break;
+
+    case 'image_term':
+      $term->content['image_term']['#markup'] =
+        get_service_image_term_render($term);
+      $term->name = '';
+      # code...
+      break;
+
+    case 'image_lugares':
+      $term->content['image_term']['#markup'] =
+        get_lugares_image_term_render($term);
+      $term->name = '';
+      # code...
+      break;
+
+    case 'icono_actividades':
+      $term->content['image_term']['#markup'] =
+        get_actividades_image_term_render($term);
+      $term->name = '';
+      break;
+  }
+}
+
+function get_full_taxonomy_family_separated_by_commas($tid, $term_name) {
+  $parents = taxonomy_get_parents($tid);
+  $family_term_in_string_comma_separated =
+    convert_taxonomy_objects_to_comma_separated_string($parents, $term_name);
+
+  return $family_term_in_string_comma_separated . ' Colombia';
+}
+
+function convert_taxonomy_objects_to_comma_separated_string($full_taxonomy_family, $term_name) {
+  $term_names = array();
+  foreach ($full_taxonomy_family as $every_term) {
+    $term_names[] = $every_term->name;
+  }
+
+  $term_names[] = $term_name;
+  return implode(', ', $term_names);
+}
+
+// Icon for servicios functions.
+function get_service_icon_render($term) {
+  // Delete default markup
+  $term->content['description']['#markup'] = '';
+
+  if (!isset($term->field_icono)) {
+    if (!isset($term->field_images)) {
+      return '';
+    } 
+    else{
+      $image_field = '';
+    }
+  }
+  else {
+    $image_field = field_view_field('taxonomy_term', $term, 'field_icono',
+      array('settings' => array('image_style' => '30x30'), 'label' => 'hidden')
+    );
+  }   
+  
+  $html_image_field = render($image_field);
+  return "<div class='icon-service'> <div class='str-title'> {$term->name} </div><span class='fondo'></span> $html_image_field </div>";
+}
+
+// Icon for servicios functions for terms.
+function get_service_image_term_render($term) {
+  // Delete default markup
+  $term->content['description']['#markup'] = '';
+  if (!isset($term->field_images)) {
+    return '';
+  }
+
+  $image_field = field_view_field('taxonomy_term', $term, 'field_images',
+    array('settings' => array('image_style' => 'thumbnail'), 'label' => 'hidden')
+  );
+  $html_image_field = render($image_field);
+  return "<div class='term-actividades'>
+            <div class='image-term'>$html_image_field</div>
+            <span>{$term->description}</span>
+          </div>";
+
+}
+
+// Icon for servicios functions for terms.
+function get_lugares_image_term_render($term) {
+  if (!isset($term->field_images)) return '';
+
+  $image_field = field_view_field('taxonomy_term', $term, 'field_images',
+    array('settings' => array('image_style' => 'thumbnail'), 'label' => 'hidden')
+  );
+  $html_image_field = render($image_field);
+  return "<div class='term-actividades'>
+            <div class='image-term'>$html_image_field</div>
+            <span>{$term->name}</span>
+          </div>";
+
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function aventure_view_modes_node_view($node, $view_mode, $langcode) {
+  switch ($view_mode) {
+    case 'frase_testimonio':
+      $node_actual = menu_get_object();
+      $tid_lugar = isset($node_actual->field_lugar[LANGUAGE_NONE][0]['tid']) ? $node_actual->field_lugar[LANGUAGE_NONE][0]['tid'] : NULL;
+      $node_testimony = aventure_search_testimony_by_place($tid_lugar);
+      if ($node_testimony) {
+        $node_wrapper = entity_metadata_wrapper('node', $node_testimony);
+      } else {
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+      }
+      
+      $node->content['frase_destacada']['#markup'] = "<div class='main-phrase'><span>" . l($node_wrapper->field_highlighted_phrase->value(), 'node/' . $node->nid) . "</span></div>";
+      $node->content['frase_destacada']['#weight'] = -1;
+      $image_info = $node_wrapper->field_images->value();
+      
+      $path_to_raw_image =image_style_url('193x124', $image_info[0]['uri']);
+      $node->content['imagen_frase']['#markup'] = l("<img class='phrase-image' src='$path_to_raw_image' />", 'node/' . $node->nid, array('html' => TRUE));
+      $node->title = '';
+
+
+      $node->content['rating']['#weight'] = 1;
+      $node->content['author']['#markup'] = "<div class='member-author'>
+        {$node_wrapper->author->name->value()} </div> ";
+      $node->content['author']['#weight'] = 2;
+      $tids_places = array();
+      $tids_places[] = $tid_lugar;
+      $places_has_been = term_names_by_comma_given_tids(array($tids_places));
+
+
+      $node->content['traveled']['#markup'] = "<div class='traveled-to'><label>" . t('Traveled to: ') . '</label>' . $places_has_been . "</div> ";
+      $node->content['traveled']['#weight'] = 3;
+      $node->content['more_testimonies_link'] = array(
+        '#markup' => l(t('READ MORE TESTIMONIES'), 'testimonies', array('attributes' => array('class' => array('more_testimonies')))),
+      );
+      $node->content['more_testimonies_link']['#weight'] = 4;
+      unset($node->content["field_highlighted_phrase"]);
+
+      break;
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_view_modes_block_info() {
+  $block = array();
+
+  $block['highlighted_phrase_home'] = array(
+    'info' => 'Highlighted phrase Home',
+  );
+
+  return $block;
+}
+
+/**
+ * hook_block_view().
+ */
+function aventure_view_modes_block_view($delta) {
+  $blocks = array();
+
+  switch ($delta) {
+    case 'highlighted_phrase_home':
+      $blocks['subject'] = t('Highlighted Phrase');
+      global $language;
+      $blocks['content'] = get_actual_home_highlighted_phrase($language->language);
+      break;
+  }
+
+  return $blocks;
+}
+
+function get_actual_home_highlighted_phrase($language) {
+  $nodequeue_main_testimony_id = 2;
+  $nodes_to_display = nodequeue_load_nodes($nodequeue_main_testimony_id);
+
+  $nids = array();
+  foreach ($nodes_to_display as $node) {
+    $nids[] = $node->nid;
+  }
+
+  $display = '';
+  if (!empty($nids)) {
+    $nodeQuery = new EntityFieldQuery();
+    $node = $nodeQuery->entityCondition('entity_type', 'node')
+      ->propertyCondition('status', 1)
+      ->propertyCondition('language', $language, '=')
+      ->propertyCondition('nid', $nids, 'IN')
+      ->execute();
+
+    if ($node['node']) {
+      $nid = array_keys($node['node']);
+      $node_loaded = node_load($nid[0]);
+      $build = node_view($node_loaded, 'frase_testimonio');
+      unset($build['language']);
+      unset($build['links']);
+      $display = render($build);
+    }
+  }
+  return $display;
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function aventure_view_modes_entity_view($entity, $view_mode, $langcode) {
+  if (!isset($entity->type)) return;
+  if ($entity->type == 'traveled_with_our_agency' && $entity->view_mode == 'home_traveled_with_us') {
+
+    $content['tit'] = array(
+      '#markup' => "<div class='title-agency'>" . t('Have traveled with us') . "</div>",
+    );
+
+    array_unshift($entity->content, $content);
+    $entity->content['articles'] = array(
+      '#markup' => l(t('Read Articles'), '<front>', array(
+        'attributes' => array(
+          'class' => array('link_to_read_articles'),
+        ),
+      )),
+    );
+  }
+}
+
+function term_names_by_comma_given_tids($tids = array()) {
+  if (empty($tids)) return '';
+  $term_names = db_select('taxonomy_term_data', 'term_names')
+    ->fields('term_names', array('name'))
+    ->condition('term_names.tid', $tids, 'IN')
+    ->range(0, 3)
+    ->execute()
+    ->fetchAllAssoc('name');
+
+  return implode(', ', array_keys($term_names));
+}
+
+/**
+ * Search node testimonio dado tip
+ */
+function aventure_search_testimony_by_place($tid) {
+  $result = db_select('field_data_field_lugar', 'n')
+    ->fields('n')
+    ->condition('bundle', 'testimony','=')
+    ->condition('field_lugar_tid', $tid,'=')
+    ->execute()
+    ->fetchAll();
+  if ($result != NULL) {
+    $random = array_rand($result, 1);
+    $term = $result[$random];
+    $node = node_load($term->entity_id);
+    return $node;
+  } else {
+    return FALSE;
+  }
+}
+
+function get_actividades_image_term_render($term) {
+  if (!isset($term->field_images)) return '';
+
+  $image = field_get_items('taxonomy_term', $term, 'field_images');
+
+  $image_field = field_view_field('taxonomy_term', $term, 'field_images', $image[0],
+    array('settings' => array('image_style' => '30x30'), 'label' => 'hidden')
+  );
+
+  $html_image_field = render($image_field);
+  return "<div class='icon-actividades'> $html_image_field </div>";
+}
+
+

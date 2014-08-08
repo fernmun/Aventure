@@ -1,0 +1,4 @@
+name = Question - Answer
+description = Custom Question, answer
+core = 7.x
+package = Aventure

@@ -1,0 +1,451 @@
+input[type="submit"],
+#comments .comment-form .form-submit {
+  text-transform: uppercase;
+  font-family: 'proxima_nova_condensed';
+  font-weight:100;
+  font-style: normal;
+  color: #fff;
+  border-radius: 30px;
+  border: none;
+}
+
+/***GENRERAL FORM***/
+fieldset {
+    border: medium none;
+    margin: 0;
+    padding: 0;
+}
+fieldset legend {
+position:absolute;
+left:-9999px;
+}
+.form-checkbox {
+  -webkit-appearance:button;
+    white-space: nowrap;
+    overflow:hidden;
+    width:15px;
+    height:15px;
+    margin: 0;
+}
+form .form-type-select  {
+  width: 100%;
+  position: relative;
+}
+form .form-type-select select  {
+  background: url('../img/select.png') no-repeat scroll 99.4% center #E2E0CC;
+  -webkit-appearance: none;
+  -moz-appearance:none;
+}
+form .chzn-container-multi .chzn-choices .search-choice {
+  background-image: none;
+}
+form .form-item input,
+div.autocomplete-deluxe-container input.autocomplete-deluxe-form,
+div.autocomplete-deluxe-container input.autocomplete-deluxe-form-single,
+input.form-checkbox,
+form .form-select,
+form .form-textarea-wrapper textarea {
+  background: #E2E0CC;
+  border-radius: 7px;
+  border: none;
+  box-shadow: none;
+  box-shadow:inset 0 0 0 #E2E0CC;
+  color: black;
+  font-weight: 300;
+  font-family: 'Raleway';
+  font-size: 13px;
+}
+.chzn-container {
+  width: 100% !important;
+}
+.chzn-container-single .chzn-single {
+  padding: 6px;
+}
+.chzn-container-single .chzn-single {
+  height: auto;
+  line-height: 19px;
+  border-radius: 7px;
+}
+.chzn-container .chzn-drop {
+  max-width: 97.8%;
+}
+.chzn-container .chzn-drop,
+.chzn-container-single .chzn-single,
+.chzn-container-single .chzn-single span,
+.chzn-container-single .chzn-single abbr,
+.chzn-container-single .chzn-search input,
+.chzn-container-single .chzn-drop,
+.chzn-container-active .chzn-single,
+form .chzn-container-multi .chzn-choices .search-choice,
+.chzn-container-active.chzn-with-drop .chzn-single,
+.chzn-container-active .chzn-choices,
+.chzn-container-multi .chzn-choices .search-choice-focus,
+.chzn-container-multi .chzn-choices .search-choice.search-choice-disabled,
+.chzn-container-multi .chzn-choices .search-choice .search-choice-close,
+.chzn-container .chzn-results,
+.chzn-container .chzn-results .no-results {
+  background-image: none;
+  border: none;
+  background: #E2E0CC;
+  box-shadow: none;
+}
+.chzn-container .chzn-results .highlighted {
+  background-color: #D34908;
+  background-image: none;
+  color: #fff;
+}
+form .form-actions input,
+form input.form-submit {
+  background: #CF4B27;
+  border-radius: 25px 25px 25px 25px;
+  box-shadow: none;
+  color: #fff;
+  border:none;
+ font-size: 13px;
+ padding: 7px 24px;
+ }
+form input#edit-preview {
+  margin-left: 10px;
+ }
+form table {
+  width: 100%;
+ background-color:#E2E0CC;
+ }
+ form table tbody {
+}
+.form-select {
+  padding: 6px;
+  font-weight: 100;
+}
+form #edit-field-highlighted-phrase {
+  padding: 0;
+  text-align: left;
+  font-size: 100%;
+}
+.resizable-textarea .grippie {
+  background: url(../img/grippie.png) no-repeat center center #DCD9C3;
+  border: none;
+}
+form .counter {
+  font-size: 14px;
+  margin: 10px 0;
+  font-weight: 100;
+}
+.form-item .description {
+    font-size: 0.85em;
+    font-weight: 100;
+    line-height: 1.4em;
+    margin: 10px 0;
+    width: 100%;
+}
+.form-item .description strong,
+form .counter {
+    font-weight: 100;
+}
+/**
+*Formulario home
+*/
+#questions-about-trip,
+.questions-about-colombia {
+    background: url("../img/globo_pregu.png") no-repeat scroll 20px center #FFFFFF;
+    border-radius: 50px 50px 50px 50px;
+    margin-top: 20px;
+    padding: 22px 30px 22px 90px;
+}
+form#questions-about-trip input,
+.region-question-about-trip-home .form-type-textfield input,
+#mail-suscription-form input[type="text"]{
+  font-family: 'Proxima_nova';
+  background: #fff;
+  border:1px solid #DEDDC2;
+  border-radius: 30px;
+  font-size: 18px;
+  color: #BBBAA9;
+  float: left;
+  padding: 0px 25px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+.form-item.form-type-textfield.form-item-question {
+  overflow: hidden;
+  width: 84%;
+  float: left;
+  position: relative;
+  margin: 5px 0;
+}
+.region-question-about-trip-home .form-type-textfield input {
+  width: 98%;
+  margin: 0;
+}
+#mail-suscription-form input[type="text"]{
+width: 752px;
+margin: 10px 10px 10px 74px;
+}
+#block-aventure-view-modes-highlighted-phrase-home .submitted {
+  display: none;
+}
+.field-name-field-testimonios .submitted {
+  display: none;
+}
+form#questions-about-trip,
+form#questions-about-colombia{
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+form#questions-about-trip .form-item-question{
+  float: left;
+  margin: 0 14px 3px auto;
+  width: 80%;
+}
+form#questions-about-trip input[type="submit"],
+form#questions-about-colombia input[type="submit"]{
+  background: #828C54;
+  color: #fff;
+  border:none;
+  border-radius: 46px;
+  font-size: 13px;
+  text-transform: uppercase;
+  width: 150px;
+  padding: 17px 69px;
+  width: 150px;
+}
+.marker,
+.form-required {
+    color: #D34908;
+}
+form .image-widget-data input.form-file {
+    background: #E2E0CC;
+  border-radius: 7px;
+  border: none;
+  box-shadow: none;
+  box-shadow:inset 0 0 0 #E2E0CC;
+  color:rgba(0, 0, 0, 0.75);
+  padding: 6px;
+  margin: 5px 0;
+  width: 41%;
+  float: left;
+}
+.form-item input.error,
+.form-item textarea.error,
+.form-item select.error {
+    border:2px solid #D34908;
+    color: #D34908 !important;
+}
+.error input,
+input.error,
+.error textarea,
+textarea.error{
+  background: #DEDDC2;
+    border:2px solid #D34908;
+}
+/**
+/**
+* Suscripcion
+*/
+#mail-suscription-form{
+  background: #DBDBC3 url(../img/form_img.jpg) no-repeat 53px 57px;
+  border-radius: 80px;
+  clear: both;
+  margin: 30px 0;
+  padding: 5px 53px 2px 53px;
+  min-width: 1140px;
+  max-width: 1140px;
+}
+#mail-suscription-form h3{
+  color: #333333;
+  font-size: 18px;
+  margin:10px 0px 10px 80px;
+}
+#mail-suscription-form .form-item-suscription-text{
+  display: inline-block;
+  margin-bottom: 29px;
+  margin-top: 0;
+}
+#mail-suscription-form input[type="submit"]{
+  background: #828C54;
+  border: 0;
+  font-size: 13px;
+  padding: 22px 67px;
+  max-width: 209px;
+  float: right;
+  border-radius: 55px 55px 55px 55px;
+}
+/***Footer register**/
+footer .form-item label{
+  color: #ACACAC;
+  left:8px;
+  position: absolute;
+  top: 12px;
+}
+footer textarea,
+footer .form-item input[type="email"],
+footer .form-item input[type="text"] {
+  color: #ACACAC;
+  background: #434343;
+  border: none;
+  height: 40px;
+  padding-left: 1.2em;
+  margin-bottom: 0px;
+  box-shadow: none;
+}
+footer textarea,
+footer form .form-textarea-wrapper textarea {
+  border-radius: 10px 10px 0 0 ;
+  height: 140px;  background: #434343;
+  border: none;
+  box-shadow: none;
+  color: #BABABA;
+}
+footer textarea:focus{
+  background: #434343;
+}
+footer .error {
+  border: 2px solid red !important;
+}
+footer .webform-component-email,
+footer .webform-component-textfield{
+  float: left;
+  width: 130px;
+  margin: 10px 10px 15px 0;
+}
+footer .webform-component-email{
+margin-right: 0;
+}
+footer .webform-component-textarea{
+  clear: both;
+}
+/**** Comments form ****/
+#comments {
+  font-family: 'Raleway';
+  font-weight: 100;
+}
+#comments .form-type-fivestar label {
+  float: left;
+  margin-right: 10px;
+}
+form.comment-form input.form-text {
+  box-shadow:inset 0 0 0 #E2E0CC;
+  background: #E2E0CC;
+  border:none;
+}
+#comments .comment-form .form-submit {
+background: #D14A1A;
+padding: 10px 30px;
+font-size: 13px;
+border:none;
+float: right;
+margin-right: 10px;
+}
+h2.title.comment-form,
+.comment-wrapper h2.title {
+  font-weight: 100;
+  font-size: 1.5em;
+  color: #333;
+}
+#comments .comment {
+  background: #E2E0CB;
+  margin-bottom: 2px;
+  font-family: 'Proxima_nova';
+  color: #333;
+  padding: 20px 30px 10px 30px;
+}
+#comments .comment  h3  a {
+  color: #333;
+}
+#comments .comment .field-type-fivestar {
+
+}
+#comments .comment ul.links.inline {
+  text-transform: uppercase;
+  font-family: 'proxima_nova_condensed';
+  font-weight:normal;
+  color: #fff;
+}
+#comments .comment ul.links.inline li {
+  float: right;
+}
+#comments .comment ul.links.inline li a {
+  color: #fff;
+}
+/******* FILTROS PORTADILLAS **********/
+.page-packages #block-system-main .content_select select,
+.page-packages #block-system-main .content_select .price_portadilla, 
+.header-hotels-wrapper select{
+  float: left;
+  margin: 0 15px;
+  width: 194px;
+}
+.header-hotels-wrapper select{
+  margin-top: 13px;
+}
+.page-packages #block-system-main .content_select .price_portadilla input,
+.page-packages #block-system-main .content_select select,
+.views-exposed-form .views-exposed-widgets select, 
+.header-hotels-wrapper select {
+ background: none repeat scroll 0 0 #E2E0CB;
+  border: medium none;
+  border-radius: 6px 6px 6px 6px;
+  height: 30px;
+  padding: 6px;
+  box-shadow: none;
+}
+.page-packages #block-system-main .content_select slider span.bubble {
+    font-family: 'Raleway';
+    font-size: 0.8em;
+    top: -31px;
+}
+.page-packages #block-system-main .content_select slider span.bubble::after {
+  content: " USD";
+}
+.page-packages #block-system-main .content_select #range-selector {
+  padding: 10px 0;
+}
+
+/****************
+input[type="checkbox"],
+input[type="radio"] {
+    display:none;
+    margin: 0;
+}*/
+.form-type-checkbox span {
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    background:url(../img/check_radio_sheet.png) left top no-repeat;
+    cursor:pointer;
+}
+.form-type-checkbox .checked span {
+    background:url(../img/check_radio_sheet.png) -19px top no-repeat;
+}
+.form-type-radio span {
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    background:url(../img/check_radio_sheet.png) -38px top no-repeat;
+    cursor:pointer;
+}
+.form-type-radio .checked span {
+    background:url(../img/check_radio_sheet.png) -57px top no-repeat;
+}
+/*********/
+.webform-container-inline div, .webform-container-inline div.form-item {
+    display: block;
+}
+
+input[type="file"], input[type="checkbox"], input[type="radio"], select {
+-webkit-appearance: none;
+ -moz-appearance:  none;
+}
+
+select {
+  background:url(../img/select.png) 90% center no-repeat #E2E0CD !important;
+}
+.form-item-lang-dropdown-select {
+  margin-top: 10px;
+}

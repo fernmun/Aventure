@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * Implements hook_form_alter().
+ */
+function aventure_views_hacks_form_alter(&$form, $form_state, $form_id) {
+  if ($form_state['view']->name == 'portadilla_testimonios') {
+    $form['field_lugares_tid']['#options']['All'] = t('Destiny');
+    $form['field_travelers_country_tid']['#options']['All'] = t('Traveler"s Country');
+  }
+  if ($form_state['view']->name == 'portadilla_fotos') {
+    $form['field_lugares_tid']['#options']['All'] = t('Destiny');
+    $form['field_actividades_tid']['#options']['All'] = t('Activities');
+    $form['field_intereses_tid']['#options']['All'] = t('Interests');
+  }
+}

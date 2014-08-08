@@ -1,0 +1,87 @@
+<?php
+
+/*
+ * Implementation of Hook_block_info()
+ */
+function aventure_content_related_block_info() {
+
+	$blocks['testimony_related'] = array(
+		'info' => t('Aventure testimony realted block')
+	);
+
+  return $blocks;
+}
+
+/**
+ *  Implementation of hook_block_view().
+ */
+function aventure_content_related_block_view($delta = '') {
+  $block = NULL;
+
+	switch ($delta) {
+		case 'testimony_related':
+			$block['subject'] = t('Aventure testimony related block');
+			$node = menu_get_object();
+			$node_wrapper = entity_metadata_wrapper('node', $node);
+			$renderable_array = aventure_content_related_get_block($node_wrapper, 'testimony', 'field_testimonios');
+			$block['content'] = render($renderable_array);
+			break;
+	}
+
+	return $block;
+}
+
+/**
+ *  Implementation of hook_theme().
+ */
+function aventure_content_related_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_testimony_related' => array(
+      'variables' => array(),
+      'template' => 'aventure_testimony_related',
+      'path' => $path . '/templates',
+    ),
+  );
+}
+
+function aventure_content_related_get_block($node_wrapper, $bundle, $field) {
+
+	if (!empty($node_wrapper->$field)) {
+		// Get related nodes
+		$nodes = $node_wrapper->$field->value();
+		$markup = NULL;
+
+		$render['open_wrapper'] = array(
+	    '#prefix' => '<div class="same_' . $bundle . '">',
+	  );
+
+	  switch ($bundle) {
+			case 'testimony':
+				$user = user_load($nodes->uid);
+				
+				$render['testimony_' . $nodes->nid] = array(
+					'#markup' => theme('aventure_testimony_related', array(											
+												'highlight_phrase' => l($nodes->title, 'node/' . $nodes->nid, array(
+													'attributes' => array('title' => $nodes->title))
+												),											
+												'user_name' => $user->name,
+												'user_pic' => theme_image(array(
+													'path' => image_style_url('127x82', $user->picture->uri), 
+													'alt' => $nodes->title)
+												),							
+											)
+										)
+				);
+				break;
+		}
+
+		$render['end_wrapper'] = array(
+	    '#suffix' => '</div>',
+	  );
+	}
+	else {
+		return NULL;
+	}
+
+	return $render;
+}

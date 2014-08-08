@@ -1,0 +1,7 @@
+name = Aventure Fivestar
+description = A custom fivestar style
+package = Aventure
+version = "7.x-1."
+core = "7.x"
+
+dependencies[] = fivestar

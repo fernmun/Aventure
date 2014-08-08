@@ -1,0 +1,368 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function aventure_event_content_menu() {
+  $items = array();
+  $items['events-and-outings'] = array(
+    'title' => 'calendar of events and outings',
+    'page callback' => 'aventure_event_calendar_page',
+    'access callback' => TRUE,
+    'expanded' => TRUE,
+  ); 
+  return $items;
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_event_content_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_more_events' => array(
+      'variables' => array(),
+      'template' => 'aventure_more_events',
+      'path' => $path . '/templates',
+    )
+  );
+}
+
+/**
+ * callback aventure_event_calendar_page().
+ **/
+function aventure_event_calendar_page() {
+  $content = array();
+  $content['left']['subtitle'] = array(
+    '#type' => 'html_tag',
+    '#tag' => 'h6',
+    '#attributes' => array('class' => 'subtitle'),
+    '#value' => t('Find what activities you can do during your stay in Colombia'),
+  );
+  $content['left']['body'] = array(
+    '#type' => 'html_tag',
+    '#tag' => 'span',
+    '#attributes' => array('class' => 'content'),
+    '#value' => t('Aqui una breve entrada para indicarle a la gente como funciona el calendario de eventos y salidas grupales de Aventure Colombia.'),
+  );
+  $social = module_invoke('easy_social', 'block_view', 'easy_social_block_1');
+  if ($social) {
+    $content['right']['social'] = array(
+      '#markup' => render($social),
+    );
+  }
+  return render($content);
+}
+
+/**
+ * Implements hook_block_info(),
+ */
+function aventure_event_content_block_info() {
+  $block['current_event'] = array(
+    'info' => 'Current event',
+  );
+  $block['more_events'] = array(
+    'info' => 'More events',
+  );
+  return $block;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_event_content_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'current_event':
+      $block['content'] = aventure_event_content_block();
+    break;
+    case 'more_events':
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $more_events = aventure_more_events_block($node_wrapper);
+      $block['content'] = render($more_events);
+    break;
+  }
+  return $block;
+}
+
+/**
+* función para renderiza el bloque de más eventos
+*/
+function aventure_more_events_block($node_wrapper) {
+  $current_nid = $node_wrapper->nid->value();
+  $nodes = array();
+  global $language;
+  $lang = $language->language;
+  $nodes = aventure_get_more_events($current_nid, $lang);
+
+  $render['title_others'] = array(
+      '#markup' => "<h3>" . t('Another events recommended by Aventure Colombia') . "</h3>",
+    );
+
+  foreach ($nodes as $node) {
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+    $first_image = NULL;
+    $first_image =$node_wrapper->field_images->value();
+
+    $path_to_image_thumbnail = image_style_url('271x182', $first_image[0]['uri']);    
+    $link_to_node = drupal_get_path_alias('node/' . $node_wrapper->nid->value());
+    $node_image = l(theme_image(array('path' => $path_to_image_thumbnail)), 
+                    'node/' . $node_wrapper->nid->value(), array('html' => true));
+    $node_name = $node_wrapper->title->value();
+    $place_term = taxonomy_term_load($node_wrapper->field_lugar->tid->value());
+
+    $place = get_full_taxonomy_family_separated_by_commas($place_term->tid, $place_term->name);
+
+    $render['evento-' . $node_wrapper->nid->value()] = array(
+      '#markup' => theme('aventure_more_events', array(
+          'link_to_node' => l($node_name, $link_to_node),
+          'node_image' => $node_image,
+          'node_name' => $node_name,
+          'place' => $place,
+        )
+      )
+    );
+  }
+
+  $render['end_wrapper'] = array(
+    '#suffix' => '</div>',
+  );
+  
+  return $render;
+}
+
+/**
+ * funcion para obtener más eventos
+ */
+function aventure_get_more_events($current_nid, $language = null) {
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'evento')
+    ->propertyCondition('status', 1)
+    ->propertyCondition('nid', $current_nid, '!=')
+    ->range(0, 4);
+
+  if (!is_null($language)) {
+    $query->propertyCondition('language', $language);
+  }
+
+  $result = $query->execute();
+  $nodes = array();
+
+  if (isset($result['node'])) {
+    $nids = array_keys($result['node']);
+    $nodes = entity_load('node', $nids);
+  }
+  return $nodes;
+}
+
+/**
+ * funcion para obtener el proximo evento
+ */
+function aventure_event_content_block() {
+  $content = array();
+  $current_event = aventure_event_current();
+  if ($current_event) {
+    $node = node_load($current_event->entity_id);
+    if (isset($node->field_images['und'])) {
+      global $base_url;
+      global $base_path;
+
+      $random = array_rand($node->field_images['und'], 1);
+      $imagen = $node->field_images['und'][$random];
+      $content['left']['imagen'] = array(
+        '#markup' => theme('image_style', array('style_name' => '560x335', 'path' => $imagen['uri'])),
+      );
+      $content['right']['subtitle'] = array(
+        '#type' => 'html_tag',
+        '#tag' => 'h4',
+        '#attributes' => array('class' => 'subtitle'),
+        '#value' => t('The next event is: ') . '"' . $node->title . '". ' . t('Only missing:'),
+      );
+      $date = isset($node->field_evento_date_from['und'][0]['value']) ? $node->field_evento_date_from['und'][0]['value'] : NULL;
+      $date = new DateTime($date);
+      $date = $date->getTimestamp();
+      $content['right']['countdown'] = aventure_event_countdown($date);
+      $content['right']['discount'] = array(
+        '#type' => 'html_tag',
+        '#tag' => 'h4',
+        '#attributes' => array('class' => 'subtitle'),
+        '#value' => t('The next event is: ') . '"' . $node->title . '". ' . t('Only missing:'),
+      );
+      $content['right']['text_discount'] = array(
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#attributes' => array('class' => 'invete-friend'),
+        '#value' => t('Want travel there with 20% discount'),
+      );
+      $content['right']['link'] = array(
+        '#markup' => l(t('Invite a friend'), 'node', array(array('class' => 'link-invete-friend'))),
+      );
+
+      return $content;
+    }
+  } else {
+    return $content;
+  }
+}
+
+/**
+ * Funcion para obtener el coundown dada la fecha en formato timestamp
+ */
+function aventure_event_countdown($date) {
+  $block = array();
+  global $base_url;
+  global $base_path;
+  $block['pre_main']['#attached']['library'][] = array('pre_libraries', 'countdown');
+  $date_formats = get_time_to_go($date);
+  $list_summary = t('Our next group outing will be on @date, missing ...',
+    array('@date' => $date_formats['date_format']));  
+
+  $result = preg_replace_callback("/\[\[(.+?)\]\]/", 'replace_span', $list_summary);
+  $list_summary = explode("\n", $result);
+  $block['pre_main']['list-summary-container'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array(drupal_html_class('pre-list-summary')),
+    ),
+  );
+  foreach ($list_summary as $key_cont => $value_cont) {
+    $block['pre_main']['list-summary-container']['item-container'][$key_cont] = array(
+      '#type' => 'container',
+      '#attributes' => array(
+        'class' => array(drupal_html_class('argumentation-list-item-container')),
+        'id' => drupal_html_class('item-') . $key_cont,
+      ),
+    );
+    $block['pre_main']['list-summary-container']['item-container'][$key_cont]['item'] = array(
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#value' => $value_cont,
+    );
+  };
+  // Countdown.
+  $event_time = $date;
+  $block['pre_main']['countdown-super-container'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array(drupal_html_class('countdown-super-container'))
+    ),
+  );
+  $block['pre_main']['countdown-super-container']['countdown-container'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'id' => drupal_html_class('countdown-container'),
+    ),
+  );
+  $block['pre_main']['#attached']['js'][] = array(
+    'data' => array(
+      'pre_blocks' => array('configuration' => array(
+        'module_path' => drupal_get_path('module', 'pre_blocks') . '/images',
+        'path' => drupal_get_path('module', 'pre_blocks'),
+        'event_time' => $event_time,
+        'site_path' => $base_url . '/',
+      )),
+    ),
+    'type' => 'setting',
+  );
+  $block['pre_main']['#attached']['js'][] = drupal_get_path('module', 'pre_blocks') . '/js/site-countdown.js';
+  $block['pre_main']['#attached']['js'][] = drupal_get_path('module', 'pre_blocks') . '/js/main-block.js';
+  return $block;
+}
+
+/**
+ * funcion aventure_event_current();
+ */
+function aventure_event_current() {
+  $current_date = date('Y-m-d H:i:s');
+  $result = @db_select('field_data_field_evento_date_from', 'n')
+    ->fields('n')
+    ->condition('field_evento_date_from_value', $current_date,'>')
+    ->orderBy('field_evento_date_from_value', 'ASC')
+    ->execute()
+    ->fetchAll();
+  if ($result != NULL) {
+    return current($result); 
+  } else {
+    return FALSE;
+  }
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function aventure_event_content_field_extra_fields() {
+  $extra['node']['evento'] = array(
+    'display' => array(
+      'date_event_top' => array(
+        'label' => t('Date event top'), 
+        'description' => t('Date event format'), 
+        'weight' => 0,
+      ),
+      'date_event_foo' => array(
+        'label' => t('Date event foo'), 
+        'description' => t('Date event format'), 
+        'weight' => 0,
+      ),
+    ),
+  );
+  return $extra;
+}
+
+/**
+ *  Implements hook_node_view().
+ */
+function aventure_event_content_node_view($node, $view_mode, $langcode) {
+  switch ($node->type) {
+    case 'evento':
+      $frase_invitacion = @$node->content['field_frase_invitacion'][0]['#markup'];
+      $frase_markup = array(
+        '#markup' => '<div class="block-invitacion"><div class="frase-invitacion">' . $frase_invitacion . '</div><div class="link-invitacion">' . l(t('Consult travel packages'), 'packages', array('attributes' => array('class' => array('link-frase-invitacion')))). '</div></div>'
+      );
+      $node->content['field_frase_invitacion'] = $frase_markup;
+      $node->content['date_event_top'] = array(
+        '#weight' => 1,
+        '#markup' => '<span class="date">' . aventure_event_content_format($node) . '</span>',
+      );
+      $node->content['date_event_foo'] = array(
+      	'#title' => t('When'),
+        '#weight' => 1,
+        '#markup' => '<div class="field field-when"><div class="field-label">' . t('When: ') . '</div>' . aventure_event_content_format($node) . '</div>'
+      );
+      if (isset($node->content['field_programacion_del_evento'][0]['#file']->uri)) {
+        $uri = $node->content['field_programacion_del_evento'][0]['#file']->uri;
+        $url = file_create_url($uri);
+
+        $file_programacion_evento_markup = array(
+          '#markup' => '<div class="programacion-evento">' . l(t('See programming'), $url, array('attributes' => array('target'=>'_blank', 'class' => array('link-programacion-evento')))). '</div>'
+        );
+        $node->content['field_programacion_del_evento'] = $file_programacion_evento_markup;
+      }
+      break;
+    
+    default:
+      # code...
+      break;
+  }
+}
+
+/**
+ * funcion format date
+ */
+function aventure_event_content_format($node) {
+	if (isset($node->field_evento_date_from['und'][0]['value2'])) {
+		//fecha formato: 25 al 30 de diciembre de 2013
+		$date_from = $node->field_evento_date_from['und'][0]['value'];
+		$date_to = $node->field_evento_date_from['und'][0]['value2'];
+		$date_from = new DateTime($date_from);
+		$date_to = new DateTime($date_to);
+		$date_field = $date_from->format('d M') . t(' al ') . $date_to->format('d M Y');
+	  return $date_field;
+	} else {
+		//fecha formato: 25 de diciembre de 2013
+		$date_from = $node->field_evento_date_from['und'][0]['value'];
+		$date_from = new DateTime($date_to);
+		return '<div class="item">' . $date_from->format('d M Y') . '<div>';
+	}
+}

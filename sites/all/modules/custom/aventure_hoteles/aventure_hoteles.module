@@ -1,0 +1,193 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_hoteles_block_info() {
+  $blocks = array();
+
+  $blocks['hotels_in_packages'] = array(
+    'info' => t('hoteles in packages'),
+  );
+
+  $blocks['packages_in_hotels'] = array(
+    'info' => t('packages in hotels'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_hoteles_block_view($delta) {
+  $block = array();
+
+  switch ($delta) {
+    case 'hotels_in_packages':
+      $block['subject'] = t('Hotels in packages');
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node)) {
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $hotels_info = renderable_array_hotels_in_packages($node_wrapper);
+        $block['content'] = render($hotels_info);
+      }
+      break;
+
+    case 'packages_in_hotels':
+      $block['subject'] = t('Packages in hotels');
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      // Check if node exists
+      if (!empty($node)) {
+        $packages_info = renderable_array_packages_in_hotels($node_wrapper);
+        $block['content'] = render($packages_info);
+      }
+      break;
+  }
+
+  return $block;
+}
+
+function renderable_array_hotels_in_packages($node_wrapper) {
+  $render = array();
+
+  $render['opening'] = array(
+    '#prefix' => '<div class="hotels_in_packages">',
+  );
+
+  $render['title'] = array(
+    '#markup' => '<div>' . $node_wrapper->title->value()
+      . ' ' . t('Hotels where you can...') . '</div>'
+      . '<div class="wrapper-hotels-packages">',
+  );
+
+  $nodes_to_display = load_hotels_in_package($node_wrapper);
+  foreach ($nodes_to_display as $every_hotel) {
+    $dirty_hotel = $every_hotel;
+    $every_hotel = entity_metadata_wrapper('node', $every_hotel);
+    $image_info = $every_hotel->field_images->value();
+    $path_to_image_thumbnail = image_style_url('174x132', $image_info[0]['uri']);
+
+    $tid = $dirty_hotel->field_lugar[LANGUAGE_NONE][0]['tid'];
+    $place_hotel_term = taxonomy_term_load($tid);
+    $place_by_comma =
+      get_full_taxonomy_family_separated_by_commas($tid, $place_hotel_term->name);
+
+    $html = theme('aventure_hotel_in_package_item', array(
+      'nid' => $every_hotel->nid->value(),
+      'image' => theme('image', array('path' => $path_to_image_thumbnail)),
+      'title' => $every_hotel->title->value(),
+      'place' => $place_by_comma,
+      'body' => $every_hotel->body->value(),
+      'link' => drupal_get_path_alias('node/' . $every_hotel->nid->value()),
+    ));
+
+    $render['hotel-' . $every_hotel->nid] = array(
+      '#markup' => $html,
+    );
+  }
+
+  $render['ending'] = array(
+    '#suffix' => '</div> </div>',
+  );
+
+  return $render;
+}
+
+function renderable_array_packages_in_hotels($node_wrapper) {
+  $render = array();
+
+  $nodes_to_display = load_packages_in_hotel($node_wrapper);
+
+  if (!empty($nodes_to_display)) {
+    $render['opening'] = array(
+      '#prefix' => '<div class="packages_in_hotels">',
+    );
+
+    $render['title'] = array(
+      '#markup' => '<div class="tourist-pack-title">' . t('Tourist packages') . '</div>',
+    );
+
+    $render['subtitle'] = array(
+      '#markup' => "<div class='tourist-pack-subtitle'> {$node_wrapper->title->value()} " . t('is part of the following Aventure Colombia"s packages') . '</div>',
+    );
+
+    
+    foreach ($nodes_to_display as $every_package) {
+      $every_package = entity_metadata_wrapper('node', $every_package);
+      $image_info = $every_package->field_field_paq_img_generica->value();
+      $path_to_image_thumbnail = image_style_url('175x175', $image_info['uri']);
+
+      $html = theme('aventure_package_in_hotel_item', array(
+        'nid' => $every_package->nid->value(),
+        'image' => theme('image', array('path' => $path_to_image_thumbnail, 'attributes' => array('class' => 'packages-hotel-image'))),
+        'title' => '<div class="packages-hotel-title">' . $every_package->title->value() . '</div>',
+        'link' => l($every_package->title->value(), 'node/' . $every_package->nid->value(), array('attributes' => array('class' => 'packages-hotel-link'))),
+      ));
+
+      $render['package-' . $every_package->nid->value()] = array(
+        '#markup' => $html,
+      );
+    }
+
+    $render['ending'] = array(
+      '#suffix' => '</div>',
+    );
+  }
+
+  return $render;
+}
+
+
+
+function load_hotels_in_package($node_wrapper) {
+  $hotels = array();
+
+  foreach ($node_wrapper->field_paq_hoteles->value() as $every_hotel) {
+    $hotels[] = $every_hotel->nid;
+  }
+
+  return node_load_multiple($hotels);
+}
+
+function load_packages_in_hotel($node_wrapper) {
+  $packages = get_packages_from_hotel($node_wrapper->nid->value());
+  return node_load_multiple($packages);
+}
+
+function get_packages_from_hotel($hotel_id) {
+  $query = new EntityFieldQuery();
+  $nodes = $query->entityCondition('entity_type', 'node')
+            ->entityCondition('bundle', 'paquete')
+            ->propertyCondition('status', 1)
+            ->fieldCondition('field_paq_hoteles', 'target_id', $hotel_id)
+            ->range(0, 3)
+            ->execute();
+
+  $node_ids = array();
+  if (isset($nodes['node'])) {
+    $node_ids = array_keys($nodes['node']);
+  }
+
+  return $node_ids;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_hoteles_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_hotel_in_package_item' => array(
+      'variables' => array(),
+      'template' => 'aventure_hotel_in_package_item',
+      'path' => $path . '/templates',
+    ),
+    'aventure_package_in_hotel_item' => array(
+      'variables' => array(),
+      'template' => 'aventure_package_in_hotel_item',
+      'path' => $path . '/templates',
+    ),
+  );
+}

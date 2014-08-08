@@ -1,0 +1,4 @@
+name = Aventure Members
+description = Widgets for members content
+core = 7.x
+package = Aventure

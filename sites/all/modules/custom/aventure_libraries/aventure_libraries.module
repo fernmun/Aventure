@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * Implements hook_library().
+ */
+function aventure_libraries_library() {
+  $module_path = drupal_get_path('module', 'aventure_libraries');
+  $items = array();
+  $items['flexslider'] = array(
+    'title' => t('Flexslider'),
+    'version' => '1.0',
+    'js' => array(
+      $module_path . '/libraries/flexslider/jquery.flexslider-min.js' => array(),
+    ),
+    'css' => array(
+      $module_path . '/libraries/flexslider/jquery.flexslider.css' => array(),
+    ),
+  );
+
+  $items['jquery.countdown'] = array(
+    'title' => t('countdown'),
+    'version' => '1.0',
+    'js' => array(
+      $module_path . '/libraries/jquery.countdown/jquery.ctdown.js' => array(),
+    ),
+    'css' => array(
+      $module_path . '/libraries/jquery.countdown/css/jquery.countdown.css' => array(),
+    ),
+  );
+
+  $items['jquery.scrollable'] = array(
+    'title' => t('Scrollable'),
+    'version' => '1.0',
+    'js' => array(
+      $module_path . '/libraries/jquery.scrollable/jquery.tools.min.js' => array(),
+    ),
+  );
+
+  $items['raty'] = array(
+    'title' => t('Raty'),
+    'version' => '2.5.2',
+    'js' => array(
+      $module_path .
+        '/libraries/raty/jquery.raty.min.js' => array(),
+    ),
+  );
+
+  $items['angularjs'] = array(
+    'title' => t('AngularJS'),
+    'version' => '1.0.7',
+    'js' => array(
+      $module_path . '/libraries/angularjs/angular.min.js' => array(),
+    ),
+  );
+
+  $items['angularjs_resource'] = array(
+    'title' => t('AngularJS Resource'),
+    'version' => '1.0.7',
+    'js' => array(
+      $module_path . '/libraries/angularjs/angular-resource.min.js' => array(),
+    ),
+  );
+
+  $items['angularjs_restangular'] = array(
+    'title' => t('AngularJS Restangular'),
+    'version' => '1.0.7',
+    'js' => array(
+      $module_path . '/libraries/angularjs/restangular.min.js' => array(),
+    ),
+  );
+
+  $items['angularjs_slider'] = array(
+    'title' => t('AngularJS Slider'),
+    'version' => '1.0',
+    'js' => array(
+      $module_path . '/libraries/angularjs-slider/angular-slider.min.js' => array(),
+    ),
+    'css' => array(
+      $module_path . '/libraries/angularjs-slider/angular-slider.css' => array(),
+    ),
+  );
+
+  return $items;
+}

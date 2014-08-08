@@ -1,0 +1,227 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_sliders_block_info() {
+  $blocks = array();
+
+  $blocks['slider_with_thumbnails'] = array(
+    'info' => 'Bloque Slider de imagenes con thumbnail',
+  );
+
+  $blocks['slider_puntos_fuertes'] = array(
+    'info' => 'Bloque Slider puntos fuertes en paquetes',
+  );
+
+  $blocks['slider_tipo_viaje'] = array(
+    'info' => 'Bloque Slider tipo de viaje',
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_sliders_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'slider_with_thumbnails':
+      $block['subject'] = 'Slider de thumbnails';
+      $html_to_display = '';
+      $node = menu_get_object();
+
+      if (!isset($node->field_images)) {
+        $block['content'] = $html_to_display;
+        break;
+      }
+
+      drupal_add_library('aventure_libraries' , 'flexslider');
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $slider_info = renderable_array_slider_with_thumbnails($node_wrapper);
+      $html_to_display = render($slider_info);
+      drupal_add_js(drupal_get_path('module', 'aventure_sliders') . '/js/aventure_sliders.js', array('scope' => 'footer'));
+      $block['content'] = $html_to_display;
+      break;
+
+    case 'slider_puntos_fuertes':
+      $block['subject'] = t('Slide Block for strong points');
+      $node = menu_get_object();
+      $html_to_display = '';
+
+      if (!isset($node->field_paquete_ventajas)) {
+        $block['content'] = $html_to_display;
+        break;
+      }
+      drupal_add_library('aventure_libraries' , 'flexslider');
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $slider_info = renderable_array_strong_points($node_wrapper);
+      $html_to_display = render($slider_info);
+      drupal_add_js(drupal_get_path('module', 'aventure_sliders') . '/js/aventure_slider_strong_points.js', array('scope' => 'footer'));
+      $block['content'] = $html_to_display;
+      break;
+
+    case 'slider_tipo_viaje':
+      $block['subject'] = t('Slider type of travel');
+      drupal_add_library('aventure_libraries' , 'jquery.scrollable');
+      global $language;
+      $taxs_type_of_travel = get_type_of_travel_taxs($language);
+      $taxs_info = renderable_array_taxs_type_of_travel($taxs_type_of_travel);
+      $block['content'] = render($taxs_info);
+      break;
+  }
+  return $block;
+}
+
+function renderable_array_slider_with_thumbnails($node_wrapper) {
+  $render = array();
+  $render['open_tags'] = array(
+    '#markup' => '<div class="flexslider"> <ul class="slides">',
+  );
+
+  $i = 0;
+
+  foreach ($node_wrapper->field_images as $every_image) {
+    $image_info = $every_image->value();
+
+    // Check if $image_info could handle like an array
+    if (is_array($image_info)) {
+      $path_to_image_thumbnail = image_style_url('78x78', $image_info['uri']);
+      $path_to_image_big = image_style_url('653x433', $image_info['uri']);
+      $render['li-component-' . $i] = array(
+        '#markup' => "<li data-thumb='$path_to_image_thumbnail'> <img src='$path_to_image_big' /> </li>",
+      );
+    }
+
+    $i++;
+  }
+
+  $render['closing_tags'] = array(
+    '#markup' => '</ul> </div>',
+  );
+
+  return $render;
+}
+
+function renderable_array_strong_points($node_wrapper) {
+  $render = array();
+  $render['open_tags'] = array(
+    '#prefix' => '<div class="strong-points-packages">'
+      . t('The strong points of this travel') . '... </div>',
+    '#markup' => '<div class="flexslider_strong_points"> <ul class="slides">',
+  );
+
+  $i = 0;
+
+  foreach ($node_wrapper->field_paquete_ventajas as $every_ventaja) {
+    $render['li-component-' . $i] = array(
+      '#markup' => "<li> <div> <p> {$every_ventaja->value()} </p> </div> </li>",
+    );
+
+    $i++;
+  }
+
+  $render['closing_tags'] = array(
+    '#markup' => '</ul> </div>',
+  );
+
+  drupal_add_js("jQuery(document).ready(function(){
+    jQuery('.flexslider_strong_points li div p').wrapInner('<span>');
+  });",'inline');
+
+  return $render;
+}
+
+function get_type_of_travel_taxs($language) {
+  $taxonomyQuery = new EntityFieldQuery();
+  $taxonomyTerms = $taxonomyQuery
+    ->entityCondition('entity_type', 'taxonomy_term')
+    ->propertyCondition('language', $language->language)
+    ->propertyCondition('vid', 7)
+    ->execute();
+
+  $taxs_type_of_travel = array();
+  if (isset($taxonomyTerms['taxonomy_term'])) {
+    $taxs_type_of_travel =
+      taxonomy_term_load_multiple(array_keys($taxonomyTerms['taxonomy_term']));
+  }
+
+  return $taxs_type_of_travel;
+}
+
+function renderable_array_taxs_type_of_travel($taxs_type_of_travel) {
+  $render = array();
+
+  $render['#attached']['css'] = array(
+    drupal_get_path('module', 'aventure_sliders') . '/css/aventure_scrollable_type_of_travel.css',
+  );
+
+  $render['opening-wrapper'] = array(
+    '#prefix' => '<div> <a class="prev browse left"></a> <div class="scrollable" id="scrollable"> <div class="items"> <div>',
+  );
+
+  $i = 0;
+
+  $render["div-{$i}"] = array(
+    '#markup' => '<div>',
+  );
+
+  foreach ($taxs_type_of_travel as $every_tax) {
+    $tag_wrapper = entity_metadata_wrapper('taxonomy_term', $every_tax);
+    $image_info = $tag_wrapper->field_travel_type_image->value();
+    $path_to_image_thumbnail = image_style_url('175x322', $image_info['uri']);
+
+    if ($i % 6 == 0) {
+      $render["div-{$i}"] = array(
+        '#markup' => '</div> <div>',
+      );
+    }
+
+    $render["term-$i"] = array(
+      '#markup' => theme('aventure_slider_type_of_travel_item', array(
+        'name' => $tag_wrapper->name->value(),
+        'image' => theme('image', array('path' => $path_to_image_thumbnail)),
+        'description' => $tag_wrapper->field_tipo_viaje_descripcion->value(),
+        'tax_id' => $every_tax->tid,
+        'link_to_packages' => l(t('See packages'), 'packages',
+          array('query' => array('tp' => $every_tax->tid))),
+      )),
+    );
+
+    $i++;
+  }
+
+  if ($i % 6 != 0) {
+      $render["div-close"] = array(
+        '#markup' => '<div>',
+      );
+    }
+
+  $render['#attached']['js'] = array(
+    drupal_get_path('module', 'aventure_sliders') . '/js/aventure_scrollable_type_of_travel.js',
+  );
+
+  $render['#attached']['css'] = array(
+    drupal_get_path('module', 'aventure_sliders') . '/css/aventure_scrollable_type_of_travel.css',
+  );
+
+  $render['ending-wrapper'] = array(
+    '#suffix' => ' </div> </div> </div> <a class="next browse right"></a> </div>',
+  );
+
+  return $render;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_sliders_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_slider_type_of_travel_item' => array(
+      'variables' => array(),
+      'template' => 'aventure_type_of_travel',
+      'path' => $path . '/templates',
+    ),
+  );
+}

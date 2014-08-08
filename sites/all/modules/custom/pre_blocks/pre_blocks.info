@@ -1,0 +1,4 @@
+name = Custom Blocks.
+description = Create the site's blocks.
+package = Aventure
+core = 7.x

@@ -1,0 +1,21 @@
+<?php
+/**
+ * @file
+ * Libraries being used in pre event.
+ */
+
+/**
+ * Implements hook_library()
+ */
+function pre_libraries_library() {
+  return array(
+    'countdown' => array(
+      'title' => 'Countdown',
+      'website' => 'http://www.gieson.com',
+      'version' => '2.0',
+      'js' => array(
+        libraries_get_path('countdown') . '/countdown.js' => array()
+      ),
+    ),
+  );
+}

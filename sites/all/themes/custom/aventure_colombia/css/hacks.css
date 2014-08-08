@@ -1,0 +1,22 @@
+
+@-moz-document url-prefix() {
+form .form-type-select select {
+     background-image:url('../img/select.png');
+     background-repeat: no-repeat;
+     background-color: #E2E0CC;
+     background-position: 99.4% center;
+     padding-right: 20px;
+ }
+.view-portadilla-miembros .icon-actividades .field-label,
+ .node-miembro-equipo .field-name-field-idiomas .field-items .field-item  h2,
+ .node-miembro-equipo .field-name-field-idiomas .field-items .field-item .taxonomy-term-description,
+ .view-portadilla-miembros .vocabulary-actividades .content .form-type-item,
+ .ds-left-hotel .vocabulary-servicios .form-type-item {
+ display: none;
+ margin: 0;
+ padding: 0;
+}
+
+.field-name-field-servicios .form-type-item {
+    display:none;
+}

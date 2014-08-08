@@ -1,0 +1,1 @@
+<span class="published-by"><?php print t('Published by LE FIGARO MAGAZINE') ?></span>

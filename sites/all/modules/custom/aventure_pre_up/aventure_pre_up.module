@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_pre_up_block_info() {
+  $blocks = array(
+    'up_button_block' => array(
+      'info' => t('Go up'),
+      'cache' => DRUPAL_CACHE_GLOBAL,
+    ),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_views().
+ */
+function aventure_pre_up_block_view($delta = '') {
+	$block = array();
+	switch ($delta) {
+		case 'up_button_block':
+      $block['content'] = array();
+      $block['content']['up-button'] = array(
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#value' => t('Up'),
+        '#attributes' => array(
+          'class' => array(drupal_html_class('pre-up-button')),
+        ),
+      );
+      $block['content']['#attached']['js'][] = drupal_get_path('module', 'aventure_pre_up') . '/js/aventure_pre_up.js';
+      break;	
+		default:
+			# code...
+			break;
+	}
+	return $block;
+}

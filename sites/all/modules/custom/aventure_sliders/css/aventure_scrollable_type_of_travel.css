@@ -1,0 +1,122 @@
+/*
+root element for the scrollable.  when scrolling occurs this
+element stays still.*/
+/*
+.scrollable {
+  position:relative;
+  height: 328px;
+  margin: 0 auto;
+  overflow:hidden;
+  width: 1140px;
+}
+*/
+/*
+root element for scrollable items. Must be absolutely positioned
+and it should have a extremely large width to accommodate scrollable
+items.  it's enough that you set width and height for the root element
+and not for this element.
+*/
+/*
+.scrollable .items {
+  width:20000em;
+  position:absolute;
+}
+*/
+/*
+a single item. must be floated in horizontal scrolling.  typically,
+this element is the one that *you* will style the most.
+*/
+/*
+.items div {
+  float:left;
+}*/
+/**
+* Slider
+
+#block-aventure-sliders-slider-tipo-viaje {
+  position: relative;
+}
+#block-aventure-sliders-slider-tipo-viaje .content_items{
+  border-bottom: 5px solid #6990A7;
+  display: block;
+  height: 326px;
+  margin:0 7.5px;
+  position: relative;
+  width: 175px;
+}
+#block-aventure-sliders-slider-tipo-viaje .content_items:hover{
+  border-bottom: 5px solid #AFA987;
+}
+#block-aventure-sliders-slider-tipo-viaje .name{
+  background: #32312B;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 200;
+  left: 10px;
+  letter-spacing: 1px;
+  padding: 5px;
+  position: absolute;
+  top: 8px;
+  text-transform: uppercase;
+  z-index: 1;
+}
+#block-aventure-sliders-slider-tipo-viaje .desc-scroll {
+  border-top: 4px solid #6990A7;
+  background: url(../images/bg_content_slider.png);
+  height: 129px;
+  padding: 10px;
+  position: absolute;
+  top: 60%;
+  width: 100%;
+}
+#block-aventure-sliders-slider-tipo-viaje .desc-scroll .descrip {
+ font-size: 14px;
+  height: 82px;
+  line-height: 1.1;
+  overflow: hidden;
+  width: 100%;
+}
+#block-aventure-sliders-slider-tipo-viaje .desc-scroll .link_pack a{
+  background: url(../images/flechas.png) left -58px no-repeat;
+  color: #CC4D1A;
+  display: block;
+  font-weight: 200;
+  padding: 5px 0px 6px 30px;
+  text-transform: uppercase;
+}
+#block-aventure-sliders-slider-tipo-viaje a.browse {
+  background: url(../images/slider_arrows.png) no-repeat;
+  display: block;
+  font-size: 0;
+  height: 97px;
+  position: absolute;
+  top: 211px;
+  width: 32px;
+  z-index: 1;
+}
+#block-aventure-sliders-slider-tipo-viaje a.next{
+  left: 70px;
+}
+#block-aventure-sliders-slider-tipo-viaje a.prev{
+  background-position: -30px 0px; 
+  right: 80px;
+}
+
+#block-aventure-sliders-slider-tipo-viaje .content{
+  background: #AFAA83 url(../images/bg_bus_inspi.png) no-repeat top right;
+  padding:113px 0 40px 0;
+}
+*/
+
+
+.scrollable .content_items img,
+.view-miembros .field-content img {
+filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 3.5+ */
+    filter: gray; /* IE6-9 */
+    -webkit-filter: grayscale(100%); /* Chrome 19+ & Safari 6+ */
+}
+
+.scrollable .content_items img:hover, .view-miembros .field-content img:hover {
+filter: none;
+-webkit-filter: grayscale(0%);
+}

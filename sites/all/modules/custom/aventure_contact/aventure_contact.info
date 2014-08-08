@@ -1,0 +1,5 @@
+name = Aventure Contact Module
+description = Module created for altering, creating and deleting anything related with contact
+package = Aventure
+core = 7.x
+version = 7.1.x

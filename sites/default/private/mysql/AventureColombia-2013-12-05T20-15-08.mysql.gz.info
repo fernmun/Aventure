@@ -1,0 +1,8 @@
+filename = "AventureColombia-2013-12-05T20-15-08"
+description = ""
+datestamp = "1386292511"
+generator = "Backup and Migrate (http://drupal.org/project/backup_migrate)"
+generatorversion = "7.x-2.x"
+sites[0][version] = "7.23"
+sites[0][name] = "Aventure Colombia"
+sites[0][url] = "http://localhost/aventure-colombia/es"

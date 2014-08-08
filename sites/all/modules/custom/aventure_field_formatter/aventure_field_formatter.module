@@ -1,0 +1,245 @@
+<?php
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function aventure_field_formatter_field_formatter_info() {
+  return array(
+    'term_reference_tree_slash' => array(
+      'label' => 'Term reference tree by slash',
+      'field types' => array('taxonomy_term_reference'),
+    ),
+    'term_reference_tree_comma' => array(
+      'label' => 'Term reference tree by comma',
+      'field types' => array('taxonomy_term_reference'),
+    ),
+    'term_reference_logo' => array(
+      'label' => 'Term reference print logo',
+      'field types' => array('taxonomy_term_reference'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function aventure_field_formatter_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    case 'term_reference_tree_slash':
+      if (!empty($items)) {
+        $element[] = array(
+          '#theme' => 'term_tree_slash',
+          '#data' => $items,
+          '#display' => $display,
+        );
+      }
+      break;
+
+    case 'term_reference_tree_comma':
+      if (!empty($items)) {
+        $element[] = array(
+          '#theme' => 'term_tree_comma',
+          '#data' => $items,
+          '#display' => $display,
+        );
+      }
+      break;
+
+    case 'term_reference_logo':
+      if (!empty($items)) {
+        $element[] = array(
+          '#theme' => 'term_logo',
+          '#data' => $items,
+          '#display' => $display,
+        );
+      }
+      break;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_field_formatter_theme() {
+  return array(
+    'term_tree_slash' => array(
+      'render element' => 'element',      
+    ),
+    'term_tree_comma' => array(
+      'render element' => 'element',
+    ),
+    'term_logo' => array(
+      'render element' => 'element',
+    ),
+  );
+}
+
+/**
+ * Themes the term tree display (as opposed to the select widget).
+ */
+function theme_term_logo($variables) {
+  $element = &$variables['element'];
+  $data = &$element['#data'];
+
+  $term = taxonomy_term_load($data[0]['tid']);
+  $image = image_load($term->field_icono[LANGUAGE_NONE][0]['uri']);
+  $logo = theme_image(array('path' => $image->source, 'attributes' => array('class' => array('logo-prensa'))));
+
+  return $logo;
+}
+
+/**
+ * Themes the term tree display (as opposed to the select widget).
+ */
+function theme_term_tree_slash($variables) {
+  $element = &$variables['element'];
+  $data = &$element['#data'];
+
+  $tree = array();
+
+  // For each selected term:
+  foreach ($data as $item) {
+    // Loop if the term ID is not zero:
+    $values = array();
+    $tid = $item['tid'];
+    $original_tid = $tid;
+    while ($tid != 0) {
+      // Unshift the term onto an array
+      array_unshift($values, $tid);
+
+      // Repeat with parent term
+      $tid = _term_reference_tree_get_parent($tid);
+    }
+
+    $current = &$tree;
+    // For each term in the above array:
+    foreach ($values as $tid) {
+      // current[children][term_id] = new array
+      if (!isset($current['children'][$tid])) {
+        $current['children'][$tid] = array('selected' => FALSE);
+      }
+
+      // If this is the last value in the array, tree[children][term_id][selected] = true
+      if ($tid == $original_tid) {
+        $current['children'][$tid]['selected'] = TRUE;
+      }
+
+      $current['children'][$tid]['tid'] = $tid;
+      $current = &$current['children'][$tid];
+    }
+  }
+
+  $output = "<div class='term-tree-slash'>";
+  $terms = _term_reference_tree_output_slash_level($element, $tree);  
+  $terms = array_reverse(explode('/', $terms));
+  $terms_size = count($terms) - 1;
+
+  foreach ($terms as $key => $term) {
+  	if (!empty($term)) {
+  		$output .= $term;
+
+  		if ($key != $terms_size) {
+	  		$output .=  ' / ';		
+	  	}
+  	}  	
+  }
+
+  $output .= "</div>";
+  return $output;
+}
+
+/**
+ * Themes the term tree display (as opposed to the select widget).
+ */
+function theme_term_tree_comma($variables) {
+  $element = &$variables['element'];
+  $data = &$element['#data'];
+
+  $tree = array();
+
+  // For each selected term:
+  foreach ($data as $item) {
+    // Loop if the term ID is not zero:
+    $values = array();
+    $tid = $item['tid'];
+    $original_tid = $tid;
+    while ($tid != 0) {
+      // Unshift the term onto an array
+      array_unshift($values, $tid);
+
+      // Repeat with parent term
+      $tid = _term_reference_tree_get_parent($tid);
+    }
+
+    $current = &$tree;
+    // For each term in the above array:
+    foreach ($values as $tid) {
+      // current[children][term_id] = new array
+      if (!isset($current['children'][$tid])) {
+        $current['children'][$tid] = array('selected' => FALSE);
+      }
+
+      // If this is the last value in the array, tree[children][term_id][selected] = true
+      if ($tid == $original_tid) {
+        $current['children'][$tid]['selected'] = TRUE;
+      }
+
+      $current['children'][$tid]['tid'] = $tid;
+      $current = &$current['children'][$tid];
+    }
+  }
+
+  $output = "<div class='term-tree-comma'>";
+  $terms = _term_reference_tree_output_slash_level($element, $tree);  
+  $terms = array_reverse(explode('/', $terms));
+  $terms_size = count($terms) - 1;
+
+  foreach ($terms as $key => $term) {
+    if (!empty($term)) {
+      $output .= $term;
+
+      if ($key != $terms_size) {
+        $output .=  ', ';    
+      }
+    }   
+  }
+
+  $output .= "</div>";
+  return $output;
+}
+
+/**
+ * Helper function to output a single level of the term reference tree
+ * display.
+ */
+function _term_reference_tree_output_slash_level(&$element, &$tree) {
+  if (isset($tree['children']) && is_array($tree['children']) && count($tree['children'] > 0)) {
+    $settings = $element['#display']['settings'];
+    $tokens_selected = @$settings['token_display_selected'];
+    $tokens_unselected = (@$settings['token_display_unselected'] != '') ? $settings['token_display_unselected'] : $tokens_selected;
+    $output = '';
+    $taxonomy_term_info = entity_get_info('taxonomy_term');
+    foreach ($tree['children'] as &$item) {
+      $term = $taxonomy_term_info['load hook']($item['tid']);
+      $uri = $taxonomy_term_info['uri callback']($term);
+      $uri['options']['html'] = TRUE;
+      if ($tokens_selected != '' && module_exists('token')) {
+        $replace = $item['selected'] ? $tokens_selected : $tokens_unselected;
+        $output .= token_replace($replace, array('term' => $term), array('clear' => TRUE));
+      }
+      else {
+        $output .= entity_label('taxonomy_term', $term) . '/';
+      }
+      if (isset($item['children'])) {
+        $output .= _term_reference_tree_output_slash_level($element, $item);
+      }
+    }
+
+    return $output;
+  }
+}

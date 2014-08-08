@@ -1,0 +1,329 @@
+/**slide Home**/
+#block-aventure-main-slider-block-main-slider-home {
+  position: relative;
+}
+#block-aventure-main-slider-block-main-slider-home ul.flex-direction-nav {
+  position: absolute;
+  top: 0%;
+  width: 98.6%;
+  margin-top: 10em;
+}
+#block-aventure-main-slider-block-main-slider-home li {
+  list-style: none;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada {
+  height: 26em;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_body{
+  position: relative;
+  top: -27em;
+  text-align: center;
+}
+#block-aventure-main-slider-block-main-slider-home li .slider_body {
+color: #fff;
+display: block;
+font-weight: 100;
+position: relative;
+top: 176px;
+width: 100%;
+max-width: 1140px;
+margin: auto;
+}
+#block-aventure-main-slider-block-main-slider-home li .slider_image {
+position: relative;
+}
+#block-aventure-main-slider-block-main-slider-home ol.flex-control-nav{
+  display: none;
+}
+#block-aventure-main-slider-block-main-slider-home .flex-direction-nav li a{
+  background: url(../img/slider_arrows.png) no-repeat;
+  display: block;
+  font-size: 0;
+  height: 97px;
+  width: 32px;
+  position: absolute;
+}
+#block-aventure-main-slider-block-main-slider-home li a.flex-prev{
+  left: 25px;
+}
+#block-aventure-main-slider-block-main-slider-home li a.flex-next{
+  background-position: -30px 0px; 
+  right: 25px;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_subtitle,
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada  .slider_title{
+  font-size: 49px;
+  letter-spacing: 2px;
+  text-shadow: 3px 2px 8px #000;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_subtitle{
+  font-size: 19px;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_description{
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin: 125px auto 0 auto;
+  width: 400px;
+}
+#block-aventure-main-slider-block-main-slider-home li.imagen-destacada .slider_price{
+  background: url(../img/shadow_img.png);
+  border: 2px solid #A98354;
+  display: inline-block;
+  margin: -22px auto 0 auto;
+  padding: 4px 29px;
+  font-size: 18px;
+}
+.block-aventure-main-slider-block,
+#dest-paquete {
+position: relative;
+background: #3C3B33;
+padding: 0 10px 5px 10px;
+}
+#dest-paquete .overlay,
+#block-aventure-main-slider-block-main-slider-home li .slider_image .overlay{
+    opacity: 0.2;
+    background-color: black;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 130%;
+    width: 100%;
+}
+#dest-paquete .slider_image {
+    position: relative;
+}
+.block-aventure-main-slider-block  .slider_body  a {
+color:#fff;
+}
+.block-aventure-main-slider-block .slider_image img{
+  width: 100%;
+  height: auto;
+}
+/*
+root element for the scrollable.  when scrolling occurs this
+element stays still.
+*/
+.scrollable {
+  /* required settings */
+  position:relative;
+  height: 328px;
+  margin: 0 auto;
+  overflow:hidden;
+  width: 1140px;
+}
+
+/*
+root element for scrollable items. Must be absolutely positioned
+and it should have a extremely large width to accommodate scrollable
+items.  it's enough that you set width and height for the root element
+and not for this element.
+*/
+.scrollable .items {
+  /* this cannot be too large */
+  width:20000em;
+  position:absolute;
+}
+
+/*
+a single item. must be floated in horizontal scrolling.  typically,
+this element is the one that *you* will style the most.
+*/
+.items div {
+  float:left;
+}
+/**
+* Slider
+*/
+.front .type-travel {
+  margin-bottom: 48px;
+}
+#block-aventure-sliders-slider-tipo-viaje {
+  position: relative;
+}
+#block-aventure-sliders-slider-tipo-viaje .content_items{
+  border-bottom: 5px solid #6990A7;
+  display: block;
+  height: 326px;
+  margin:0 7.5px;
+  position: relative;
+  width: 175px;
+}
+#block-aventure-sliders-slider-tipo-viaje .content_items:hover{
+  border-bottom: 5px solid #AFA987;
+}
+#block-aventure-sliders-slider-tipo-viaje .name,
+#block-views-miembros-block .view-content.masonry .views-field-php .title {
+  background: #32312B;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 100;
+  left: 10px;
+  letter-spacing: 1px;
+  padding: 5px;
+  position: absolute;
+  top: 8px;
+  text-transform: uppercase;
+  z-index: 1;
+font-family: 'proxima_nova_condensed';
+}
+#block-aventure-sliders-slider-tipo-viaje .name {
+  font-size: 17px;
+}
+#block-aventure-sliders-slider-tipo-viaje .content_items:hover .name,
+#block-views-miembros-block .view-content.masonry .views-field-php .title {
+  background: #E59719;
+}
+
+#block-aventure-sliders-slider-tipo-viaje .desc-scroll {
+  border-top: 4px solid #6990A7;
+  background: url(../img/bg_content_slider.png);
+  height: 130px;
+  padding: 10px;
+  position: absolute;
+  top: 60%;
+  width: 100%;
+  display: none;
+}
+#block-views-miembros-block .view-content.masonry .views-field-php .effect-up {
+height: 100%;
+}
+#block-views-miembros-block .view-content.masonry .views-field-php .additional-wrapper {
+  border-top: 4px solid #6990A7;
+  background: url(../img/bg_content_slider.png);
+  padding: 10px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+font-family: 'proxima_nova_condensed';
+}
+#block-views-miembros-block .view-content.masonry .views-field-php .additional-wrapper .see-node {
+  margin-top: 5px;
+}
+#block-aventure-sliders-slider-tipo-viaje .content_items:hover .desc-scroll {
+  display: block;
+}
+#block-aventure-sliders-slider-tipo-viaje .desc-scroll .descrip {
+ font-size: 14px;
+  height: 82px;
+  line-height: 1.1;
+  overflow: hidden;
+  width: 100%;
+}
+#block-views-miembros-block .view-content.masonry .views-field-php {
+ font-size: 14px;
+  line-height: 1.1;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  display: none;
+  height: 100%;
+}
+#block-views-miembros-block .view-content.masonry .masonry-item:hover .views-field-php {
+display: block;
+}
+#block-aventure-sliders-slider-tipo-viaje .desc-scroll .link_pack a{
+  background: url(../img/flechas.png) left -58px no-repeat;
+  color: #CC4D1A;
+  display: block;
+  font-weight: 200;
+  padding: 5px 0px 6px 30px;
+  text-transform: uppercase;
+}
+#block-aventure-sliders-slider-tipo-viaje a.browse,
+.flex-direction-nav li a {
+  background: url(../img/slider_arrows.png) no-repeat;
+  display: block;
+  font-size: 0;
+  height: 97px;
+  position: absolute;
+  width: 32px;
+  z-index: 1;
+}
+#block-aventure-sliders-slider-tipo-viaje a.next {
+  margin-left: 50px;
+  top: 110px
+}
+#block-aventure-sliders-slider-tipo-viaje a.prev {
+  background-position: -30px 0px; 
+  margin-right: 50px;
+  right: 0;
+  top: 220px;
+}
+#block-aventure-sliders-slider-tipo-viaje .content{
+  background: #AFAA83 url(../img/bg_bus_inspi.png) no-repeat top right;
+  padding:113px 0 40px 0;
+}
+
+/**MAP REGION**/
+.region-block-map-region,
+.large-6.columns #type-of-travel {
+  margin-top: 45px;
+}
+#type-of-travel .main-phrase {
+  background: url("../img/comillas.png") no-repeat scroll left top transparent;
+  left: -49px;
+  margin-bottom: 1em;
+  padding-bottom: 5px;
+  padding-left: 49px;
+  position: relative;
+
+}
+#type-of-travel .main-phrase span {
+  color: #EBE9D7;
+  background: #CF4B27;
+  font-weight: 100;
+  font-size: 24px;
+  padding: 5px;
+}
+#type-of-travel .main-phrase span a{
+  color: #EBE9D6;
+  font-weight: normal;
+  line-height: 45px;
+}
+#type-of-travel .traveled-to,
+#type-of-travel .member-author {
+  margin: 0 0 10px;
+  width: 64%;
+  float: right;
+  text-align: left;
+}
+.front #type-of-travel .traveled-to a {
+  margin-left: 0;
+}
+
+#type-of-travel img {
+  float: left;
+  margin-right: 20px;
+}
+#type-of-travel .member-author{
+  color: #425C6B;
+  font-size: 16px;
+  font-weight: 200;
+  text-transform: uppercase;
+  font-family: 'proxima_nova_condensed';
+}
+.region-block-map-region h2 {
+  padding-bottom: 26px;
+  font-size: 19px;
+}
+.region-block-map-region img {
+	border:6px solid #C3BFA1;
+}
+.front #type-of-travel .block-aventure-view-modes,
+.front .region-traveled-with-us-agency {
+    margin-left: -65px;
+    position: relative;
+}
+
+/****block-views-miembros-block**/
+.view-miembros.view-display-id-block .masonry-item,
+.view-portadilla-testimonios.view-display-id-block .masonry-item {
+   width: 260px;
+}
+.view-portadilla-testimonios.view-display-id-block .masonry-item {
+   float: none;
+   margin: 0px;
+}
+#block-views-miembros-block .views-field-php .see-node a {
+  float: left;
+}

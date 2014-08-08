@@ -1,0 +1,4 @@
+name = Other nodes same tag
+description = Blocks with same tag.
+package = Aventure
+core = 7.x

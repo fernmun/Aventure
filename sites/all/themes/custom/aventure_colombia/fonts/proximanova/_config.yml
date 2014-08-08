@@ -1,0 +1,5 @@
+safe:      false
+auto:      true
+exclude:   [config.rb, sass]
+include:   js
+permalink: pretty

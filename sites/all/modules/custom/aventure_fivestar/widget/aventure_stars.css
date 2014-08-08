@@ -1,0 +1,38 @@
+/* Static View-only Star Version */
+.fivestar-aventure_stars div.fivestar-widget-static .star {
+  width: 17px;
+  height: 15px;
+  background: url(big_star.png) no-repeat 0 0px;
+}
+
+.fivestar-aventure_stars div.fivestar-widget-static .star span.on {
+  background: url(big_star.png) no-repeat 0 -32px;
+}
+
+.fivestar-aventure_stars div.fivestar-widget-static .star span.off {
+  background: url(big_star.png) no-repeat 0 0px;
+}
+
+/* Javascript Star Version */
+.fivestar-aventure_stars div.fivestar-widget .cancel,
+.fivestar-aventure_stars div.fivestar-widget .star {
+  width: 17px;
+  height: 15px;
+}
+.fivestar-aventure_stars div.fivestar-widget .cancel,
+.fivestar-aventure_stars div.fivestar-widget .cancel a {
+  background: url(big_delete.png) no-repeat 0 0;
+}
+
+.fivestar-aventure_stars div.fivestar-widget .star,
+.fivestar-aventure_stars div.fivestar-widget .star a {
+  background: url(big_star.png) no-repeat 0 0px;
+}
+
+.fivestar-aventure_stars div.fivestar-widget div.on a {
+  background-position: 0 -16px;
+}
+.fivestar-aventure_stars div.fivestar-widget div.hover a,
+.fivestar-aventure_stars div.rating div a:hover {
+  background-position: 0 -32px;
+}

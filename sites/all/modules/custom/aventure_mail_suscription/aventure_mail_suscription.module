@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_mail_suscription_block_info() {
+  $blocks = array();
+
+  $blocks['suscription_form'] = array(
+    'info' => 'Bloque suscripcion de mail',
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_mail_suscription_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'suscription_form':
+      $block['subject'] = 'Formulario de suscripcion';
+      //$block['content'] = drupal_get_form('mail_suscription_form');
+      break;
+  }
+
+  return $block;
+}
+
+function mail_suscription_form($form, $form_state) {
+  $form = array();
+
+  $form['text'] = array(
+    '#markup' => '<h3>' . t('Get the best deals in your email') . '</h3>',
+  );
+
+  $form['suscription_text'] = array(
+    '#type' => 'textfield',
+    '#placeholder' => t('Your mail here.'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Get deals'),
+  );
+
+  return $form;
+}

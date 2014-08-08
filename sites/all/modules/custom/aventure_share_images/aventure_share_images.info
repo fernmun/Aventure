@@ -1,0 +1,4 @@
+name = Aventure share images
+description = Give you a code to share aventure images in many sizes
+package = Aventure
+core = 7.x

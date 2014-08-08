@@ -1,0 +1,5 @@
+name = Aventure Content Realated
+description = Get content related by entity reference
+core = 7.x
+version = 7.1.x
+package = Aventure

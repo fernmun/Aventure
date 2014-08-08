@@ -1,0 +1,185 @@
+diff --git a/easy_social.module b/easy_social.module
+index 6ef8e7e..97b8d52 100755
+--- a/easy_social.module
++++ b/easy_social.module
+@@ -161,6 +161,16 @@ function easy_social_menu() {
+     'file' => 'includes/easy_social.admin.inc',
+   );
+ 
++  $items['admin/config/content/easy_social/widget-extra/pinterest'] = array(
++    'title' => 'Pinterest',
++    'description' => 'Extra settings for Pinterest',
++    'page callback' => 'drupal_get_form',
++    'page arguments' => array('easy_social_admin_config_extra_pinterest'),
++    'access arguments' => array('administer easy social'),
++    'type' => MENU_LOCAL_TASK,
++    'file' => 'includes/easy_social.admin.inc',
++  );
++
+   return $items;
+ }
+ 
+@@ -393,6 +403,25 @@ function easy_social_variable_info() {
+     'token' => FALSE,
+   );
+ 
++  // Custom settings for Pinterest.
++  $variables['easy_social_pinterest_count_show'] = array(
++    'title' => t('Easy Social Global Pinterest Show Count option'),
++    'default' => 1,
++    'group' => 'easy_social',
++    'token' => FALSE,
++  );
++
++  $variables['easy_social_pinterest_image_field'] = array(
++    'title' => t('Easy Social Global Pinterest Image Field option'),
++/*
++    'type' => 'select',
++    'options_callback' => _easy_social_variable_get_fields('image'),
++*/
++    'default' => t('None'),
++    'group' => 'easy_social',
++    'token' => FALSE,
++  );
++
+   return $variables;
+ }
+ 
+@@ -602,6 +631,16 @@ function easy_social_easy_social_widget() {
+         ),
+       ),
+     ),
++    'pinterest' => array(
++      'name' => 'Pinterest',
++      'markup' => '_easy_social_widget_pinterest_markup',
++      'scripts' => array(
++        array(
++          'path' => '//assets.pinterest.com/js/pinit.js',
++          'type' => 'external',
++        ),
++      ),
++    ),
+   );
+ }
+ 
+@@ -925,3 +964,30 @@ function _easy_social_variable_get_value($name) {
+ 
+   return variable_get_value($name);
+ }
++
++/**
++ * Helper function to return and array of all field definitions for use as an option list. If $type is set
++ * it will return an array of all field definitions of that type field type.
++ *
++ * @param string $type
++ * @return array $options A field definitions array
++ */
++function _easy_social_variable_get_fields($type = NULL) {
++  $fields = field_info_fields();
++
++  $options = array();
++  if (isset($type)) {
++    foreach ($fields as $field => $info) {
++      if ($info['type'] == $type) {
++        $options[$field] = $field;
++      }
++    }
++  }
++  else {
++    foreach ($fields as $field => $info) {
++        $options[$field] = $field;
++    }
++  }
++
++  return $options;
++}
+diff --git a/includes/easy_social.admin.inc b/includes/easy_social.admin.inc
+index e50808d..6382d42 100644
+--- a/includes/easy_social.admin.inc
++++ b/includes/easy_social.admin.inc
+@@ -393,6 +393,34 @@ function easy_social_admin_config_extra_linkedin() {
+ 
+ /**
+  * Form callback.
++ * Extra settings for Pinterest Widget.
++ *
++ * @see easy_social_menu()
++ */
++function easy_social_admin_config_extra_pinterest() {
++  $form = array();
++  $form['easy_social_pinterest_title'] = array(
++    '#markup' => '<h4>' . t('Pinterest widget settings') . '</h4>',
++  );
++  $form['easy_social_pinterest_info'] = array(
++    '#markup' => t('For more information check out the official LinkedIn widget <a href="!link" target="_blank">documentation</a>.', array('!link' => 'https://developer.linkedin.com/share-plugin')),
++  );
++  $form['easy_social_pinterest_count_show'] = array(
++    '#type' => 'checkbox',
++    '#title' => t('Display the count bubble'),
++    '#default_value' => variable_get_value('easy_social_pinterest_count_show'),
++  );
++  $form['easy_social_pinterest_image_field'] = array(
++    '#type' => 'select',
++    '#title' => t('Choose an image field'),
++    '#options' => _easy_social_variable_get_fields('image'),
++    '#default_value' => variable_get_value('easy_social_pinterest_image_field'),
++  );
++  return system_settings_form($form);
++}
++
++/**
++ * Form callback.
+  * Displays Easy Social Summary.
+  *
+  * @see easy_social_menu()
+diff --git a/includes/easy_social.widgets.inc b/includes/easy_social.widgets.inc
+index 84000d6..7f4c27f 100644
+--- a/includes/easy_social.widgets.inc
++++ b/includes/easy_social.widgets.inc
+@@ -170,6 +170,46 @@ TT;
+ }
+ 
+ /**
++ * Generate the needed markeup for the Pinterest share link.
++ *
++ * @param $url The url to be shared
++ * @param $type Generate horizontal or vertical widgets
++ * @param $title The title to be shared
++ * @return string the html markup
++ */
++function _easy_social_widget_pinterest_markup($url, $type, $title = NULL, $lang = 'und') {
++  // This widget doesn't yet offer a localization option.
++  // @TODO Pinterest does not yet have a public API to track successful shares. When it does this will likely be in
++  // either a seperate module or a new version.
++
++  $count_direction = ($type == EASY_SOCIAL_WIDGET_HORIZONTAL) ? 'beside' : 'above';
++  $show_count = variable_get_value('easy_social_pinterest_count_show');
++  $type = isset($show_count) ? $count_direction : 'none';
++
++  $internal_url = drupal_get_normal_path(ltrim(parse_url($url, PHP_URL_PATH), '/'));
++  $entity_type = array_shift(explode('/', $internal_url));
++  $entity_id = array_pop(explode('/', $internal_url));
++  // Handle comments. If this is a comment, load the node's image field.
++  if ($entity_type == 'comment') {
++    $entity_id = comment_load($entity_id)->nid;
++    $entity_type = 'node';
++    $internal_url = $entity_type . '/' . $entity_id;
++  }
++  $entity = menu_get_object($entity_type, 1, $internal_url);
++  $image_field = variable_get_value('easy_social_pinterest_image_field');
++  $media = file_create_url($entity->{$image_field}['und'][0]['uri']);
++  $href = "http://pinterest.com/pin/create/button/?url=$url&media=$media&description=$title";
++  $markup = <<<PN
++
++<a
++data-pin-config="{$type}"
++href="{$href}"
++data-pin-do="buttonPin" ><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" /></a>
++PN;
++  return $markup;
++}
++
++/**
+  * Returns language for Twitter widget.
+  * Since this widget has very limited and specific language options, we have to
+  * manually map some Drupal to Twitter language conversions.

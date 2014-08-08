@@ -1,0 +1,65 @@
+diff --git a/gmap.module b/gmap.module
+index da99c4f..5babd6e 100755
+--- a/gmap.module
++++ b/gmap.module
+@@ -663,7 +663,8 @@ function _gmap_pre_render_map($element) {
+   }
+ 
+   if (isset($mms[$mm]['filename'])) {
+-    $element['#attached']['js'][$path . '/thirdparty/js/' . $mms[$mm]['filename']] = array('weight' => 5);
++    $element['#attached']['js'][$path . '/thirdparty/' . $mms[$mm]['filename']] = array('weight' => 5);
++    $element['#attached']['js'][] = array('data' => array('gmap_markermanager' => $mms[$mm]), 'type' => 'setting');
+   }
+   $element['#attached']['js'][$path . '/js/' . $mm . '_marker.js'] = array('weight' => 5);
+ 
+diff --git a/gmap_settings_ui.inc b/gmap_settings_ui.inc
+index e294bd0..7302e66 100644
+--- a/gmap_settings_ui.inc
++++ b/gmap_settings_ui.inc
+@@ -313,7 +313,7 @@ if (file_default_scheme() != 'public') {
+     'markerMinZoom' => 4,
+     'markerMaxZoom' => 0,
+   ), $opts['markermanager']);
+-  
++
+   $opts['markerclusterer'] = array_merge(array(
+     'filename' => 'markerclusterer_packed.js',
+     'gridSize' => 60,
+@@ -440,7 +440,7 @@ if (file_default_scheme() != 'public') {
+   $form['gmap_markermanager']['markerclusterer']['filename'] = array(
+     '#type' => 'textfield',
+     '#title' => t('Filename'),
+-    '#description' => t('Name of downloaded file in the thirdparty folder. Default: %default', array('%default' => 'markerclusterer_packed.js')),
++    '#description' => t('Name of downloaded file in the thirdparty folder. Default: %default', array('%default' => 'markerclusterer.js')),
+     '#default_value' => $opts['markerclusterer']['filename'],
+   );
+   $form['gmap_markermanager']['markerclusterer']['gridSize'] = array(
+@@ -464,7 +464,7 @@ if (file_default_scheme() != 'public') {
+   $form['gmap_markermanager']['markerclusterer']['styles'] = array(
+     '#type' => 'textarea',
+     '#title' => t('MarkerClusterer styles in JSON. Read description!'),
+-    '#description' => t('Hack to get MarkerClusterer styles injected. Should parse with PHP\'s json_decode(), so put object member names in quotes and escape properly (at least slashes need to be escaped by backslash). Example: [{"height":34,"width":20,"opt_anchor":[10,17],"opt_textColor":"white","url":"\/sites\/all\/themes\/mytheme\/images\/icons\/gmap\/cluster.png"}]'),
++    '#description' => t('Hack to get MarkerClusterer styles injected. Should parse with PHP\'s json_decode(), so put object member names in quotes and escape properly (at least slashes need to be escaped by backslash). Example: [{"height":34,"width":20,"opt_anchor":[10,17],"textColor":"white","url":"\/sites\/all\/themes\/mytheme\/images\/icons\/gmap\/cluster.png"}]'),
+     '#default_value' => drupal_json_encode($opts['markerclusterer']['styles']),
+     '#cols' => 60,
+     '#rows' => 5,
+diff --git a/js/markerclusterer_marker.js b/js/markerclusterer_marker.js
+index f22ea6f..29eb052 100644
+--- a/js/markerclusterer_marker.js
++++ b/js/markerclusterer_marker.js
+@@ -24,10 +24,11 @@ Drupal.gmap.addHandler('gmap', function (elem) {
+     if (Drupal.settings.gmap_markermanager.maxZoom){
+       Drupal.settings.gmap_markermanager.maxZoom = parseInt(Drupal.settings.gmap_markermanager.maxZoom);
+     }
+-	obj.mc = new MarkerClusterer(obj.map, [], {
+-	  maxZoom: parseInt(Drupal.settings.gmap_markermanager["maxZoom"]),
+-	  gridSize: parseInt(Drupal.settings.gmap_markermanager["gridSize"])
+-	});
++    Drupal.settings.gmap_markermanager = jQuery.extend({}, {
++      maxZoom: parseInt(Drupal.settings.gmap_markermanager["maxZoom"]),
++      gridSize: parseInt(Drupal.settings.gmap_markermanager["gridSize"])
++    }, Drupal.settings.gmap_markermanager);
++    obj.mc = new MarkerClusterer(obj.map, [], Drupal.settings.gmap_markermanager);
+   });
+   obj.bind('addmarker', function (marker) {
+     // @@@ Would be really nice to have bulk adding support in gmap.

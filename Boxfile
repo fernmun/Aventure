@@ -1,0 +1,10 @@
+web1:
+  shared_writable_dirs:
+    - sites/default/files
+    - tmp
+  php_extensions:
+    - mysql
+    - mysqli
+    - gd
+    - pdo
+    - pdo_mysql

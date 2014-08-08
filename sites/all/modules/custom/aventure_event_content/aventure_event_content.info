@@ -1,0 +1,5 @@
+name = Aventure event content
+description = Module content event
+package = Aventure
+core = 7.x
+version = 7.1.x

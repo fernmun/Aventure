@@ -1,0 +1,9 @@
+.ds-left {
+  width: 15%;
+  float: left;
+}
+
+.ds-right {
+  width: 85%;
+  float: right;
+}

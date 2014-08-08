@@ -1,0 +1,292 @@
+<?php
+
+/*
+ * Implementation of Hook_block_info()
+ */
+function aventure_members_block_info() {
+
+	$blocks['member_info'] = array(
+		'info' => t('Aventure member summary')
+	);
+
+  $blocks['another_members'] = array(
+    'info' => t('Aventure another members')
+  );
+
+  $blocks['member_places'] = array(
+    'info' => t('Aventure member places')
+  );
+
+  $blocks['member_offer'] = array(
+    'info' => t('Member offer')
+  );
+
+	return $blocks;
+}
+
+/**
+ *  Implementation of hook_block_view().
+ */
+function aventure_members_block_view($delta = '') {
+  $block = NULL;
+
+	switch ($delta) {
+
+	    case 'another_members':
+	      $block['subject'] = t('Aventure another members');
+	      $renderable_array = aventure_members_get_another();
+	      $block['content'] = render($renderable_array);
+	      break;
+
+      case 'member_info':
+        $block['subject'] = t('Aventure member information');
+        $node = menu_get_object();
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $renderable_array = aventure_member_summary_block($node_wrapper);
+        $block['content'] = render($renderable_array);
+        break;
+
+      case 'member_places':
+        $node = menu_get_object();
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $renderable_array = aventure_places_block($node_wrapper);
+        $block['content'] = render($renderable_array);
+        break;
+
+      case 'member_offer':
+        $block['content'] = theme('aventure_member_offer', array());
+        break;
+	}
+
+	return $block;
+}
+
+/**
+ *  Implementation of hook_theme().
+ */
+function aventure_members_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_more_members' => array(
+      'variables' => array(),
+      'template' => 'more_random_members',
+      'path' => $path . '/templates',
+    ),
+    'aventure_member_info' => array(
+      'variables' => array(),
+      'template' => 'member_info_block',
+      'path' => $path . '/templates'
+    ),
+    'aventure_member_places' => array(
+      'variables' => array(),
+      'template' => 'member_place',
+      'path' => $path . '/templates'
+    ),
+    'aventure_member_offer' => array(
+      'variables' => array(),
+      'template' => 'member_offer',
+      'path' => $path . '/templates'
+    ),
+  );
+}
+
+function aventure_member_summary_block($node_wrapper) {
+
+  $langs = NULL;
+  $activities = NULL;
+  $places_list = NULL;
+
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="member-info">',
+  );
+
+  // Get all mamber's languages
+  foreach ($node_wrapper->field_idiomas->value() as $key => $lang) {
+    if ($key == 0) {
+      //debido a un bug no detectado
+      $langs = $lang->description;
+    }
+    else {
+      //debido a un bug no detectado
+      $langs .= ', ' .$lang->description;
+    }
+  }
+
+  // Get all mamber's activities
+  foreach($node_wrapper->field_actividades->value() as $key => $activity) {
+    if ($key == 0) {
+      $activities = $activity->description;
+    }
+    else {
+      $activities .= ', ' .$activity->description;
+    }
+  }
+
+  $places = $node_wrapper->field_lugares->value();
+  foreach ($places as $place) {
+    if (!is_null($places_list)) {
+      $places_list .= $place->description . ', '; 
+    }
+    else {
+      $places_list = $place->description . ', ';
+    }    
+  }
+
+  $render['content_wrapper'] = array(
+    '#markup' => theme('aventure_member_info', array(
+        'language' => $langs,
+        'date' => format_date($node_wrapper->field_fecha_miembro->value(), 'custom', 'd \d\e F  \d\e Y'),
+        'job' => $node_wrapper->field_cargo->value(),
+        'place' => $places_list,
+        'activities' => $activities,
+      )
+    )
+  );
+
+  $render['end_wrapper'] = array(
+    '#sufix' => '</div>',
+  );
+
+
+  return $render;
+}
+
+function aventure_places_block($node_wrapper) {
+
+  $limit = 0;
+  $places = array();
+
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="member-places">',
+  );
+
+
+  $render['title'] = array(
+    '#prefix' => '<h2>' . t("See some places where you will find @name", array("@name" => $node_wrapper->title->value())) . '</h2>',
+  );
+  // Get all member places
+  foreach ($node_wrapper->field_lugares->value() as $key => $data) {
+    if (!empty($data->field_images)) {
+      $places[$limit]['title'] = $data->name;
+      $places[$limit]['image'] = theme('image_style', array(
+          'style_name' => '165x165',
+          'path' => isset($data->field_images[LANGUAGE_NONE][0]['uri']) ? $data->field_images[LANGUAGE_NONE][0]['uri'] : NULL,
+          'attributes' => array('class' => 'thumb', 'alt' => $data->name)
+        ));
+      $limit++;
+    }
+    // Max of 3 images
+    if ($limit == 3) {
+      break;
+    }
+  }
+
+  $render['content_wrapper'] = array(
+    '#markup' => theme('aventure_member_places', array(
+        'places' => $places
+      )
+    )
+  );
+
+  $render['end_wrapper'] = array(
+    '#sufix' => '</div>',
+  );
+
+  return $render;
+}
+
+/**
+*   Return renderable object about 1 member from Aventure Colombia
+*/
+function aventure_members_get_another() {
+  $current_node = menu_get_object();
+  $nodes = aventure_members_get_random_members($current_node->nid);
+
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="more-members">'
+  );
+
+  $render['title'] = array(
+    '#prefix' => '<h2>' . t('Another members from Aventure Colombia') . '</h2>'
+  );
+
+  foreach ($nodes as $node) {
+    $node = node_load($node->nid);
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+    $name = $node_wrapper->title->value();
+    $profile = $node_wrapper->body->value();
+    $profile = !empty($profile) ? $profile : $node_wrapper->field_highlighted_phrase->value();
+
+    $image = $node_wrapper->field_imagen_perfil->value();
+    $subtitle = $node_wrapper->field_lugares->value();
+
+    $member_pic = l(theme('image_style', array(
+          'style_name' => '89x89',
+          'path' => isset($image['uri']) ? $image['uri'] : NULL,
+          'attributes' => array('class' => $name, 'alt' => $name)
+        )), 
+        'node/' . $node_wrapper->nid->value(),
+        array('html' => true));
+    
+    $render['testimony-' . $node->nid] = array(
+      '#markup' => theme('aventure_more_members', array(
+          'user_image' => $member_pic,
+          'user_name' => l($name, 'node/' . $node_wrapper->nid->value(), array(
+            'attributes' => array(
+              'title' => $name
+            ))),
+          'subtitle' => $subtitle[0]->name,
+          'highlighted_phrase' => l($profile['safe_value'], 'node/' . $node_wrapper->nid->value(), array(
+              'attributes' => array(
+                'title' => $node->title
+              ),
+              'html' => TRUE,
+            )
+          ),
+        )
+      )
+    );
+  }
+
+  $render['more'] = array(
+    '#prefix' => l("Meet our team", 'members', array('attributes' => array(
+      'class' => 'meet-members',
+      'title' => 'Meet our team'
+    ))),
+  );
+
+  $render['end_wrapper'] = array(
+    '#sufix' => l("Meet our team", '/members') . '</div>',
+  );
+
+  return $render;
+}
+
+/**
+*   Return random user members
+*/
+function aventure_members_get_random_members($nid, $limit = 3) {
+
+  $query = db_select('node', 'n')
+          ->fields('n', array('nid'))
+          //->condition('status', 1, '=')
+          ->condition('type', 'miembro_equipo', '=')
+          ->condition('nid', $nid, '!=')
+          ->orderRandom()
+          ->range(0, $limit);
+
+  return $query->execute()->fetchAll(PDO::FETCH_OBJ);
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function aventure_members_node_view($node, $view_mode, $langcode) {
+  if ($node->type == 'miembro_equipo') {
+    $user = user_load($node->uid);
+    $autor_name = isset ($user->field_user_name['und'][0]['value']) ? $user->field_user_name['und'][0]['value'] : $user->name;
+    $node->content['field_actividades']['#prefix'] = '<span>' . $autor_name . ' ' . t('you could guide in activities such as:') . '</span>';
+    return $node;
+  }
+}
+
+

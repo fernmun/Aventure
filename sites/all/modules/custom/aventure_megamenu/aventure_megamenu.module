@@ -1,0 +1,226 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_megamenu_block_info() {
+	$blocks = array();
+	$blocks['menu_inspiration'] = array(
+		'info' => 'Menu - inspiration',
+	);
+	$blocks['menu_recommendations'] = array(
+		'info' => 'Menu - recommendations',
+	);
+	$blocks['menu_destinations'] = array(
+		'info' => 'Menu - destinations',
+	);
+	$blocks['menu_interests'] = array(
+		'info' => 'Menu - interests',
+	);
+	$blocks['menu_blogs'] = array(
+		'info' => 'Menu - blogs',
+	);
+	$blocks['menu_press_reports'] = array(
+		'info' => 'Menu - press reports',
+	);
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_megamenu_block_view($delta = '') {
+	$block = array();
+	switch ($delta) {
+		case 'menu_inspiration':
+			$block['subject'] = t('VISUAL INSPIRATION');
+			$block['content']['descripcion'] = array(
+		    '#type' => 'html_tag',
+		    '#tag' => 'span',
+		    '#value' => t('Photography, videos and shocking images of 360 degrees'),
+		  );
+			$block['content']['images']['#markup'] = '<span class = "imag1"></span><span class = "imag2"></span><span class = "imag3"></span>';
+			$block['content']['top']['#markup'] = get_menu_list(3, t('Top Categories Featured:'));
+			$block['content']['link']['#markup'] = l(t('See all'), 'photos', array('attributes' => array('class' => array('botton-megamenu'))));
+			break;
+		case 'menu_recommendations':
+			$block['subject'] = t('RECOMMENDATIONS');
+			$block['content']['descripcion'] = array(
+		    '#type' => 'html_tag',
+		    '#tag' => 'span',
+		    '#value' => t('tips and advice from other travelers like you'),
+		  );
+		  $menu_list = get_menu_list(4, t('Top recommendations highlighted:'), 5);
+		  if (isset($menu_list['images'])) {
+		  	$image_list = get_image_list($menu_list['images']);
+		  	if ($image_list)
+					$block['content']['images']['#markup'] = $image_list;
+		  }
+			$block['content']['top']['#markup'] = $menu_list['items'];
+
+			$block['content']['link']['#markup'] = l(t('Read all'), 'testimonies', array('attributes' => array('class' => array('botton-megamenu'))));
+			break;
+		case 'menu_destinations':
+			$block['subject'] = t('DESTINATIONS');
+
+			$block['content']['left']['descripcion'] = array(
+		    '#type' => 'html_tag',
+		    '#tag' => 'span',
+		    '#value' => t('Where to go to Colombia? Guide to the best places to visit'),
+		    '#prefix' => '<div class="left">',
+		  );
+			$block['content']['left']['images']['#markup'] = '<span class = "map"></span></div>';
+			$block['content']['right']['top']['#markup'] = get_menu_list(5, t('Top destinations:'));
+			$block['content']['right']['top']['#prefix'] = '<div class="right">';
+			$block['content']['right']['link']['#markup'] = '<div class ="see-all">' . l(t('See all'), 'packages', array('attributes' => array('class' => array('botton-megamenu')))) . '</div>';
+			$block['content']['right']['link']['#sufix'] = '</div>';
+			break;
+		case 'menu_interests':
+			$block['subject'] = t('INTERESTS');
+			$block['content']['descripcion'] = array(
+		    '#type' => 'html_tag',
+		    '#tag' => 'span',
+		    '#value' => t('Find your travel based on your interests'),
+		  );
+			$block['content']['images']['#markup'] = '<span class = "activity"></span>';
+			$block['content']['top']['#markup'] = get_menu_list(6, t('Top searched interests:'));
+			$block['content']['link']['#markup'] = l(t('See all'), 'node', array('attributes' => array('class' => array('botton-megamenu'))));
+			break;
+		case 'menu_blogs':
+			$block['subject'] = t('TRAVEL BLOGS');
+			$block['content']['descripcion'] = array(
+		    '#type' => 'html_tag',
+		    '#tag' => 'span',
+		    '#value' => t('Log of our travel adventures by Colombia'),
+		  );
+			$block['content']['top']['#markup'] = get_menu_list(7, t('Top recent articles:'));
+			$block['content']['link']['#markup'] = l(t('See all'), 'node', array('attributes' => array('class' => array('botton-megamenu'))));
+			break;
+		case 'menu_press_reports':
+			$block['subject'] = t('JOURNALIST REPORTS');
+			$block['content']['descripcion'] = array(
+		    '#type' => 'html_tag',
+		    '#tag' => 'span',
+		    '#value' => t('Travel with journalists and photographers who inspire you'),
+		  );
+		  $menu_list = get_menu_list(8, t('Top articles:'), 2);
+		  if (isset($menu_list['images'])) {
+		  	$image_list = get_image_term_prensa($menu_list['images']);
+		  	if ($image_list)
+		  		$block['content']['images']['#markup'] = $image_list;	
+		  }
+			$block['content']['top']['#markup'] = isset($menu_list['items']) ? $menu_list['items']: NULL;
+			$block['content']['link']['#markup'] = l(t('See all'), 'node', array('attributes' => array('class' => array('botton-megamenu'))));
+			break;
+		default:
+			# code...
+			break;
+	}
+	return $block;
+}
+
+/**
+* Funcion para obtener la lista de nodos de un nodequeue
+*/
+function get_menu_list($id_queue, $title, $num_images = NULL) {
+	global $language;
+  $current_language = $language->language;
+  $nodequeue_menu_inspiracion = $id_queue;
+  $nodes_to_display = nodequeue_load_nodes($nodequeue_menu_inspiracion);
+
+  $nids = array();
+  foreach ($nodes_to_display as $node) {
+    $nids[] = $node->nid;
+  }
+  $display = array();
+  if (!empty($nids)) {
+    $nodeQuery = new EntityFieldQuery();
+    $node = $nodeQuery->entityCondition('entity_type', 'node')
+      ->propertyCondition('status', 1)
+      ->propertyCondition('language', $current_language, '=')
+      ->propertyCondition('nid', $nids, 'IN')
+      ->execute();
+    if ($node == array())
+    	return FALSE;
+    $i = 0;
+    foreach (current($node) as $value) {
+      if (isset($value->nid)) {
+        $node_loaded = node_load($value->nid);
+        $display[] = l($node_loaded->title, 'node/' . $node_loaded->nid);
+        $i++;
+      }
+    }
+		if ($num_images != NULL) {
+			$num_testimonies = count(current($node));
+			if ($num_testimonies <= $num_images) {
+				$num_images = $num_testimonies;
+			}
+			$random = array_rand(current($node), $num_images);
+			return array(
+				'images' => $random,
+				'items' => theme('item_list', array('items' => $display, 'title' => $title, 'type' => 'ol')),
+			);
+		} else {
+			return theme('item_list', array('items' => $display, 'title' => $title, 'type' => 'ol'));
+		}
+  } else {
+  	return FALSE;
+  }
+}
+
+/**
+ * Function get image_user
+ */
+function get_image_list($images) {
+	if (!is_array($images))
+		$images = array($images);
+	$items = array();
+	foreach ($images as $value) {
+		$node = node_load($value);
+		$user = user_load($node->uid);
+		if (isset($user->picture->uri)) {
+			$image_item = array(
+				'style_name' => '30x30',
+				'path' => $user->picture->uri,
+				'width' => '30',
+				'height' => '30',
+				'alt' => $node->title,
+				'title' => $node->title,
+			);
+			$items[] = theme('image_style', $image_item);
+		}
+	}
+	if ($items != NULL) {
+		return theme('item_list', array('items' => $items, 'title' => NULL));
+	} else {
+		return FALSE;
+	}
+}
+
+/**
+ * Function get image_term_prensa
+ */
+function get_image_term_prensa($images) {
+	if (!is_array($images))
+		$images = array($images);
+	$items = array();
+	foreach ($images as $value) {
+		$node = node_load($value);
+		$prensa = $node->field_prensa_relacionada['und'][0]['tid'];
+		$term = taxonomy_term_load($prensa);
+		if (isset($term->field_icono['und'][0]['uri'])) {
+			$image_item = array(
+				'style_name' => 'thumbnail',
+				'path' => $term->field_icono['und'][0]['uri'],
+				'alt' => $term->name,
+				'title' => $term->name,
+			);
+			$items[] = theme('image_style', $image_item);
+		}
+	}
+	if ($items != NULL) {
+		return theme('item_list', array('items' => $items, 'title' => NULL));
+	} else {
+		return FALSE;
+	}
+}

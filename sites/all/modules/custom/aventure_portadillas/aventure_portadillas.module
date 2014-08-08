@@ -1,0 +1,397 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+function aventure_portadillas_init() {
+  $query_parameters = drupal_get_query_parameters();
+  if (isset($query_parameters['pt'])) {
+    setcookie('aventure_pt', $query_parameters['pt']);
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function aventure_portadillas_menu() {
+  $items = array();
+
+  $items['packages'] = array(
+    'title' => 'packages',
+    'title callback' => 'portadillas_title',
+    'access callback' => TRUE,
+    'page callback' => 'paquete_portadillas',
+  );
+
+  $items['hotels/city/%'] = array(
+    'title' => 'Hotels',
+    'title callback' => 'hotels_by_city_title',
+    'access callback' => TRUE,
+    'page callback' => 'hotels_by_city_portadillas',
+  );
+
+  $items['hotels'] = array(
+    'title' => 'Hotels',
+    'title callback' => 'hotels_title',
+    'access callback' => TRUE,
+    'page callback' => 'hotels_portadillas',
+  );
+
+  $items['members'] = array(
+    'title' => 'Members',
+    'title callback' => 'members_title',
+    'access callback' => TRUE,
+    'page callback' => 'members_portadillas',
+  );
+
+  $items['photos'] = array(
+    'title' => 'Photos',
+    'title callback' => 'photos_title',
+    'access callback' => TRUE,
+    'page callback' => 'photos_portadillas',
+  );
+
+  $items['testimonies'] = array(
+    'title' => 'Testimonies',
+    'title callback' => 'testimonies_title',
+    'access callback' => TRUE,
+    'page callback' => 'testimonies_portadillas',
+  );
+
+  return $items;
+}
+
+/**
+ * Callback for 'packages' title string.
+ */
+function portadillas_title() {
+  return t('Packages');
+}
+
+/**
+ * Callback for 'hotels' title string.
+ */
+function hotels_by_city_title() {
+  return t('Hotels');
+}
+
+/**
+ * Callback for 'Photos' title string.
+ */
+function photos_title() {
+  return t('Photos');
+}
+
+/**
+ * Callback for 'members' title string.
+ */
+function members_title() {
+  return t('Colombia experts guide');
+}
+
+/**
+ * Callback for 'hotels' title string.
+ */
+function hotels_title() {
+  return t('Hotels');
+}
+
+/**
+ * Callback for 'hotels' title string.
+ */
+function testimonies_title() {
+  return t('Testimonies');
+}
+
+/**
+ * Callback for the 'packages' page.
+ */
+function paquete_portadillas() {
+  drupal_set_title(t('Packages'), PASS_THROUGH);
+  add_angular_libraries();
+  drupal_add_js(drupal_get_path('module', 'aventure_portadillas') . '/js/portadilla_paquetes.js');
+  return theme('aventure_paquete_portadilla');
+}
+
+/**
+ *  Implementation of hook_theme().
+ */
+function aventure_portadillas_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_paquete_portadilla' => array(
+      'variables' => array(),
+      'template' => 'paquete_portadilla',
+      'path' => $path . '/templates',
+    ),
+    'aventure_hotel_by_city_portadilla' => array(
+      'variables' => array(),
+      'template' => 'hotels_by_city_portadilla',
+      'path' => $path . '/templates',
+    ),
+    'aventure_hotel_portadilla' => array(
+      'variables' => array(),
+      'template' => 'hotel_portadilla',
+      'path' => $path . '/templates',
+    ),
+    'aventure_members_portadilla' => array(
+      'variables' => array(),
+      'template' => 'members_portadilla',
+      'path' => $path . '/templates',
+    ),
+    'aventure_photos_portadilla' => array(
+      'variables' => array(),
+      'template' => 'photos_portadilla',
+      'path' => $path . '/templates',
+    ),
+    'aventure_testimonies_portadilla' => array(
+      'variables' => array(),
+      'template' => 'testimonies_portadilla',
+      'path' => $path . '/templates',
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_node_presave().
+ */
+function aventure_portadillas_node_presave($node) {
+  if ($node->type) {
+    $file_image =
+      file_load($node->field_field_paq_img_generica['und'][0]['fid']);
+    $path_to_image_cache_271x182 =
+      image_style_url('271x182', $file_image->uri);
+    $node->field_path_image_cache_271x182['und'][0]['value'] =
+      $path_to_image_cache_271x182;
+  }
+}
+
+function hotels_by_city_portadillas() {
+  $view = views_embed_view('hoteles_por_ciudad', 'block_1', arg(2));
+  return theme('aventure_hotel_by_city_portadilla',
+    array('view' => $view));
+}
+
+function members_portadillas() {
+  drupal_set_title(t('Members'), PASS_THROUGH);
+  $view = views_embed_view('portadilla_miembros', 'block_1');
+   return theme('aventure_members_portadilla', array('view' => $view));
+}
+
+function hotels_portadillas() {
+  drupal_set_title(t('Hotels'), PASS_THROUGH);
+  add_angular_libraries();
+  drupal_add_js(drupal_get_path('module', 'aventure_portadillas') . '/js/portadilla_hoteles.js');
+  return theme('aventure_hotel_portadilla');
+}
+
+/**
+ * Portadillas for photos
+ */
+function photos_portadillas() {
+  drupal_set_title(t('Photos'), PASS_THROUGH);
+  $view = views_embed_view('portadilla_fotos', 'block');
+  return theme('aventure_photos_portadilla', array('view' => $view));
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_portadillas_block_info() {
+  $blocks = array();
+  $blocks['hotel_statistics'] = array(
+    'info' => 'Hotel Statistics',
+  );
+
+  $blocks['member_statistics'] = array(
+    'info' => 'Member Statistics',
+  );
+
+  $blocks['photos_statistics'] = array(
+    'info' => 'Photos Statistics',
+  );
+
+  $blocks['testimonies_statistics'] = array(
+    'info' => 'Testimonies Statistics',
+  );
+
+  return $blocks;
+}
+
+function aventure_portadillas_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'hotel_statistics':
+      $block['subject'] = t('Hotel statistics');
+      $hotels_statistics_array = renderable_hotel_statistics();
+      $block['content'] = render($hotels_statistics_array);
+      break;
+    case 'member_statistics':
+      $block['subject'] = t('Member statistics');
+      $member_statistics_array = renderable_member_statistics();
+      $block['content'] = render($member_statistics_array);
+      break;
+    case 'photos_statistics':
+      $block['content'] = t('Photos statistics');
+      $photo_statistics_array = renderable_photo_statistics();
+      $block['content'] = render($photo_statistics_array);
+      break;
+    case 'testimonies_statistics':
+      $block['content'] = t('Testimonies statistics');
+      $testimonie_statistics_array = renderable_testimonie_statistics();
+      $block['content'] = render($testimonie_statistics_array);
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * return a renderable array with the number of hotels in Colombia
+ */
+function renderable_hotel_statistics() {
+  $render = array();
+  $render['#prefix'] = '<div id="hotel_statistics_block" class="statistics-block">';
+
+  $render['hotels'] = array(
+    '#prefix' => '<div id="total_hotels">',
+    '#markup' =>  '<span>' . total_count_published_hotels() . ' </span> ' . t('Hotels'),
+    '#suffix' => '</div>',
+  );
+
+  $render['lowest_price'] = array(
+    '#prefix' => '<div id="lowest_price_hotel">',
+    '#markup' => '<span>' . lowest_hotel_price() . ' </span> ' . t('Lowest price'),
+    '#suffix' => '</div>',
+  );
+
+  $render['#suffix'] = '</div>';
+  return $render;
+}
+
+
+
+/**
+ * return a renderable array with the number of hotels in Colombia
+ */
+function renderable_member_statistics() {
+  $render = array();
+  $render['#prefix'] = '<div id="member_statistics_block" class="statistics-block">';
+
+  $render['members'] = array(
+    '#prefix' => '<div id="total_members">',
+    '#markup' =>  '<span>'
+      . total_count_published_members_actual_language() . ' </span> '
+      . t('Members'),
+    '#suffix' => '</div>',
+  );
+
+  $render['#suffix'] = '</div>';
+  return $render;
+}
+
+function renderable_photo_statistics() {
+  $render = array();
+  $render['#prefix'] = '<div id="photos_statistics_block" class="statistics-block">';
+
+  $render['photos'] = array(
+    '#prefix' => '<div id="total_photos">',
+    '#markup' =>  '<span>'
+      . total_count_published_photos_actual_language() . ' </span> '
+      . t('Photos'),
+    '#suffix' => '</div>',
+  );
+
+  $render['comments'] = array(
+    '#prefix' => '<div id="total_comments_on_photos">',
+    '#markup' =>  '<span>'
+      . total_count_comments_made_on_photos_actual_language() . ' </span> '
+      . t('Comments'),
+    '#suffix' => '</div>',
+  );
+
+  $render['#suffix'] = '</div>';
+  return $render;
+}
+
+function renderable_testimonie_statistics() {
+  $render = array();
+  $render['#prefix'] = '<div id="testimonies_statistics_block" class="statistics-block">';
+
+  $render['testimonies'] = array(
+    '#prefix' => '<div id="total_testimonies">',
+    '#markup' =>  '<span>'
+      . total_count_published_testimonies_actual_language() . ' </span> '
+      . t('testimonies'),
+    '#suffix' => '</div>',
+  );
+
+  $render['#suffix'] = '</div>';
+  return $render;
+}
+
+function testimonies_portadillas() {
+  drupal_set_title(t('Testimonies'), PASS_THROUGH);
+  $view = views_embed_view('portadilla_testimonios', 'block');
+   return theme('aventure_testimonies_portadilla', array('view' => $view));
+}
+
+function total_count_published_photos_actual_language() {
+  global $language;
+  $result = db_query('SELECT COUNT(nid) as total FROM {node} n WHERE type = :type AND language = :language AND status = :status', array(':type' => 'fotografia', ':status' => 1, ':language' => $language->language,));
+  $record = $result->fetchObject();
+  return $record->total;
+}
+
+function total_count_comments_made_on_photos_actual_language() {
+  global $language;
+  $result = db_query('SELECT COUNT(cid) as total FROM {comment} com JOIN {node} n ON com.nid = n.nid WHERE com.language = :language AND com.status = :status AND n.type = :type', array(':status' => 1, ':language' => $language->language, ':type' => 'fotografia',));
+  $record = $result->fetchObject();
+  return $record->total;
+}
+
+function total_count_published_hotels() {
+  global $language;
+  $result = db_query('SELECT COUNT(nid) as total FROM {node} n WHERE type = :type AND language = :language AND status = :status', array(':type' => 'hotel', ':status' => 1, ':language' => $language->language,));
+  $record = $result->fetchObject();
+  return $record->total;
+}
+
+function lowest_hotel_price() {
+  global $language;
+  $result = db_query('SELECT MIN(field_paquete_precio_value) as minValue FROM {field_data_field_paquete_precio} n JOIN node ON node.nid = entity_id WHERE entity_type = :type AND node.language = :language AND bundle = :bundle', array(':type' => 'node', ':bundle' => 'hotel', ':language' => $language->language,));
+  $record = $result->fetchObject();
+  return $record->minValue;
+}
+
+function add_angular_libraries() {
+  drupal_add_library('aventure_libraries', 'angularjs');
+  drupal_add_library('aventure_libraries', 'angularjs_resource');
+  drupal_add_library('aventure_libraries', 'angularjs_slider');
+}
+
+function total_count_published_members_actual_language() {
+  global $language;
+  $result = db_query('SELECT COUNT(nid) as total FROM {node} n WHERE type = :type AND language = :language AND status = :status', array(
+      ':type' => 'miembro_equipo',
+      ':status' => 1,
+      ':language' => $language->language,
+    )
+  );
+
+  $record = $result->fetchObject();
+  return $record->total;
+}
+
+function total_count_published_testimonies_actual_language() {
+  global $language;
+  $result = db_query('SELECT COUNT(nid) as total FROM {node} n WHERE type = :type AND language = :language AND status = :status', array(
+      ':type' => 'testimony',
+      ':status' => 1,
+      ':language' => $language->language,
+    )
+  );
+
+  $record = $result->fetchObject();
+  return $record->total;
+}

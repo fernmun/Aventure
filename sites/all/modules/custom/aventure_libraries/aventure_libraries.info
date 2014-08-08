@@ -1,0 +1,4 @@
+name = Aventure Libraries
+description = Libraries for the site
+core = 7.x
+package = Aventure

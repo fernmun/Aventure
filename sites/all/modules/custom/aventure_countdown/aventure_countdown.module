@@ -1,0 +1,70 @@
+<?php
+
+function aventure_countdown_block_info() {
+  $blocks = array();
+
+  $blocks['aventure_countdown'] = array(
+    'info' => 'Bloque Countdown',
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_countdown_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'aventure_countdown':
+      $block['subject'] = t('Countdown Block');
+      drupal_add_library('aventure_libraries', 'jquery.countdown');
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $renderable_info = renderable_array_counter($node_wrapper);
+      $block['content'] = render($renderable_info);
+      break;
+  }
+  return $block;
+}
+
+function renderable_array_counter($node_wrapper) {
+  $render = array();
+  switch ($node_wrapper->type->value()) {
+    case 'paquete':
+      $date = $node_wrapper->field_paquete_fecha->value();
+      $date_formats = get_time_to_go($date['value']);
+      $render['legend']['#markup'] =
+      t('Our next will be @date', array('@date' => $date_formats['date_format']));
+      break;
+    case 'evento':
+      $date = $node_wrapper->field_evento_date_from->value();
+      $date_formats = get_time_to_go($date);
+      $render['legend']['#markup'] =
+      t('Missing @date', array('@date' => $date_formats['date_format']));
+      break;
+    default:
+      $date = '1999999999';
+      break;
+  }
+
+  $render['counter'] = array(
+    '#markup' => '<div class="countdown">10 seconds!</div>',
+  );
+
+
+  jquery_countdown_add(".countdown", array(
+    "until" => $date_formats['counter'],
+    "format" => 'DHM',
+  ));
+  return $render;
+}
+
+function get_time_to_go($date_of_departure_in_timestamp) {
+  $block_format = format_date($date_of_departure_in_timestamp, 'custom', 'j F Y');
+  $date = format_date($date_of_departure_in_timestamp, 'custom', 'Y-m-d');
+  return array(
+    'date_format' => $block_format,
+    'counter' => $date,
+  );
+}

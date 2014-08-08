@@ -1,0 +1,64 @@
+  <?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_fotografia_block_info() {
+  $blocks = array();
+
+  $blocks['photos_in_packages'] = array(
+    'info' => t('Photos in packages'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_fotografia_block_view($delta) {
+  $block = array();
+
+  switch ($delta) {
+    case 'photos_in_packages':
+      $block['subject'] = t('Photos in packages');
+      $photos = photos_in_packages();
+      $block['content'] = render($photos);
+      break;
+  }
+
+  return $block;
+}
+
+function photos_in_packages() {
+  $node = menu_get_object();
+  $render = array();
+
+  if (empty($node)) return $render;
+
+  $render['title'] = array(
+    '#markup' => '<h3 class="title-photos-packages">'
+      . $node->title . '</h3>',
+  );
+
+  $render['subtitle'] = array(
+    '#markup' => '<span class="subtitle-photos-packages">'
+      . t('Photo galleries for you to be inspired') . '</span>',
+  );
+
+
+  $tids = array();
+  if (isset($node->field_lugares_multiples[LANGUAGE_NONE])) {
+    foreach($node->field_lugares_multiples[LANGUAGE_NONE] as $tid_info) {
+      $tids[] = $tid_info['tid'];
+    }
+  }
+
+  $render['photo_views'] = array(
+    '#markup' => views_embed_view('fotos_mismo_lugar',
+      'default', implode('+', $tids)),
+  );
+
+  return $render;
+}
+

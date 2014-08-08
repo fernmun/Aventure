@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+function aventure_main_slider_block_install() {
+  $queue_data = array(
+    'destacadas' => array(
+      'title' => 'Destacadas',
+      'name' => 'Destacadas',
+      'subqueue_title' => '',
+      'size' => '0',
+      'reverse' => 0,
+      'link' => 'Add to queue',
+      'link_remove' => 'Remove from queue',
+      'roles' => array ( ),
+      'types' => array ( 0 => 'imagen_destacada'),
+      'i18n' => 1,
+      'op' => 'Submit',
+      'submit' => 'Submit',
+      'owner' => 'nodequeue',
+      'show_in_links' => true,
+      'show_in_tab' => true,
+      'show_in_ui' => true,
+      'reference' => 0,
+      'subqueues' => array ( ),
+      'new' => true,
+      'add_subqueue' => array ( 0 => 'Destacadas',), // match title above
+    ),
+  );
+
+  foreach ($queue_data as $q) {
+    $queue = (object) $q;
+    $qid = nodequeue_save($queue);
+    variable_set('qid_for_home_slider', $qid);
+  }
+}

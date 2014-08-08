@@ -1,0 +1,194 @@
+<?php
+
+/*
+ * Implements hook_block_info().
+ */
+function aventure_prensa_block_info() {
+	$blocks['member_prensa_info'] = array(
+		'info' => t('Aventure member prensa')
+	);
+  $blocks['prensa_published'] = array(
+    'info' => t('Aventure prensa published by')
+  );
+  $blocks['prensa_places'] = array(
+    'info' => t('Aventure prensa places')
+  );
+  $blocks['prensa_offer'] = array(
+    'info' => t('Prensa offer')
+  );
+  $blocks['prensa_logos'] = array(
+    'info' => t('Prensa logos')
+  );
+
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_prensa_block_view($delta = '') {
+  $block = array();
+	switch ($delta) {
+    case 'member_prensa_info':
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $renderable_array = aventure_member_prensa_block($node_wrapper);
+      $block['content'] = render($renderable_array);
+      break;
+
+    case 'prensa_published':
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $renderable_array = aventure_prensa_published_by($node_wrapper);
+      $block['content'] = render($renderable_array);
+      break;
+
+    case 'prensa_places':
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $renderable_array = aventure_prensa_places_block($node_wrapper);
+      $block['content'] = render($renderable_array);
+      break;
+
+    case 'prensa_offer':
+      $block['content'] = theme('aventure_prensa_offer', array());
+      break;
+
+    case 'prensa_logos':
+      $block['content'] = aventure_prensa_logos_block();
+      break;
+
+	}
+	return $block;
+}
+
+/**
+ *  Implements hook_theme().
+ */
+function aventure_prensa_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_prensa_info' => array(
+      'variables' => array(),
+      'template' => 'aventure_info_prensa',
+      'path' => $path . '/templates'
+    ),
+    'aventure_prensa_published' => array(
+      'variables' => array(),
+      'template' => 'aventure_prensa_published',
+      'path' => $path . '/templates'
+    ),
+    'aventure_prensa_offer' => array(
+      'variables' => array(),
+      'template' => 'aventure_prensa_offer',
+      'path' => $path . '/templates'
+    ),
+    'aventure_prensa_logos' => array(
+      'variables' => array(),
+      'template' => 'aventure_prensa_logos',
+      'path' => $path . '/templates'
+    ),
+  );
+}
+
+function aventure_prensa_logos_block($node){
+  $terms = array();
+  $tree = taxonomy_get_tree(13);
+
+  foreach ($tree as $key => $term) {
+    $term = taxonomy_term_load($term->tid);
+    $terms[$key]['name'] = $term->name;
+    $terms[$key]['url'] = $term->field_sitio_web[LANGUAGE_NONE][0]['safe_value'];
+    $terms[$key]['uri'] = $term->field_icono[LANGUAGE_NONE][0]['uri'];
+  }
+
+  return theme('aventure_prensa_logos', array('terms' => $terms));
+}
+
+function aventure_prensa_places_block($node_wrapper) {
+  $limit = 0;
+  $places = array();
+
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="member-places">',
+  );
+
+  $render['title'] = array(
+    '#prefix' => '<h2>' . t("See some places where this was") . '</h2>',
+  );
+
+  // Get all member places
+  foreach ($node_wrapper->field_lugares->value() as $key => $data) {
+    if (!empty($data->field_images)) {
+      $places[$limit]['title'] = $data->name;
+      $places[$limit]['image'] = theme('image_style', array(
+          'style_name' => '165x165',
+          'path' => isset($data->field_images[LANGUAGE_NONE][0]['uri']) ? $data->field_images[LANGUAGE_NONE][0]['uri'] : NULL,
+          'attributes' => array('class' => 'thumb', 'alt' => $data->name)
+        ));
+      $limit++;
+    }
+    // Max of 3 images
+    if ($limit == 3) {
+      break;
+    }
+  }
+
+  $render['content_wrapper'] = array(
+    '#markup' => theme('aventure_member_places', array(
+        'places' => $places
+      )
+    )
+  );
+
+  $render['end_wrapper'] = array(
+    '#sufix' => '</div>',
+  );
+
+  return $render;
+}
+
+function aventure_prensa_published_by($node) {
+
+  $prensa = $node->field_prensa_relacionada->value();
+  $name = $prensa->name;
+  $output = theme('aventure_prensa_published', array('name' => $name));
+
+  return $output;
+}
+
+/**
+ * Function prensa block
+ */
+function aventure_member_prensa_block($node_wrapper) {
+
+  $langs = NULL;
+  $activities = NULL;
+
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="more-testimonies">',
+  );
+  $publicado = $node_wrapper->created->value();
+  $periodista = $node_wrapper->field_prensa_name_autor->value();
+  $medio = $node_wrapper->field_prensa_medio->value();
+  $fecha = @$node_wrapper->field_prensa_date_travel->value();
+  $fecha = isset($fecha['value']) ? $fecha['value'] :  NULL;
+  $web = $node_wrapper->field_prensa_relacionada->value();
+  $web = isset($web->field_sitio_web['und'][0]['value']) ? $web->field_sitio_web['und'][0]['value'] : 'www';
+
+  $render['content_wrapper'] = array(
+    '#markup' => theme('aventure_prensa_info', array(
+        'publicado' => format_date($publicado, 'custom', 'd \d\e F  \d\e Y'),
+        'periodista' => $periodista,
+        'medio' => $medio,
+        'fecha' => format_date($fecha, 'custom', 'd \d\e F  \d\e Y'),
+        'web' => $web,
+      )
+    )
+  );
+
+  $render['end_wrapper'] = array(
+    '#sufix' => '</div>',
+  );
+
+  return $render;
+}

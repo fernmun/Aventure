@@ -1,0 +1,345 @@
+<?php
+
+/**
+ * Implements hook_form_alter().
+ */
+function aventure_user_traveler_form_alter(&$form, &$form_state, $form_id) {
+	switch ($form_id) {
+		case 'user_profile_form':
+			global $user;
+			if (!isset($user->rol[1]))
+				//$form['field_user_testimonies']['und'][0] = FALSE;
+			break;
+
+		case 'user_register_form':
+			// Para que el usuario nuevo automaticamente tome el rol traveler
+			$rol_actual = $form['account']['roles'][2];
+			unset($form['account']['roles'][2]);
+			$roles = user_roles();
+			$key = array_search("traveler", $roles);
+			if ($key != NULL) {
+				$form['account']['roles'][$key] = $rol_actual;
+				$form['account']['roles'][$key]['#title'] = 'traveler';
+			}
+			break;
+
+		case 'user_profile_form':
+			// para depurar formulario de perfil de usuario.
+			break;
+		
+		case 'testimony_node_form':
+			// Para depurar formulario de creación de testimonio.
+			$form['field_lugar']['und']['#title'] = t(@$form['field_lugar']['und']['#title']);
+			$form['field_trip_date']['und']['#title'] = t(@$form['field_trip_date']['und']['#title']);
+			$form['field_highlighted_phrase']['und']['#title'] = t(@$form['field_highlighted_phrase']['und']['#title']);
+			$form['field_images']['und'][0]['#title'] = t(@$form['field_images']['und'][0]['#title']);
+			$form['field_tips']['und']['#title'] = t(@$form['field_tips']['und']['#title']);
+			$form['field_trip_rating']['und'][0]['#title'] = t(@$form['field_trip_rating']['und'][0]['#title']);
+			$form['body']['und']['#title'] = t(@$form['body']['und']['#title']);
+			$form['title']['#title'] = t(@$form['title']['#title']);
+			$form['field_trip_date']['und']['#description'] = t(@$form['field_trip_date']['und']['#description']);
+			break;
+		default:
+			# code...
+			break;
+	}
+}
+
+/**
+ * Implements hook_menu().
+ */
+function aventure_user_traveler_menu() {
+	$items['create_testimony'] = array(
+    'title' => t('Create new testimony'),
+    'description' => t('Create new testimony'),
+    'page callback' => 'aventure_user_traveler_create_form',
+    'access arguments' => array('aventure create user traveler'),
+    'type' => MENU_CALLBACK,
+    'file' => 'aventure_user_traveler.form.inc',
+  );
+  $items['edit_testimony/%'] = array(
+    'title' => t('Create new testimony'),
+    'description' => t('Create new testimony'),
+    'page callback' => 'aventure_user_traveler_edit_form',
+    'access arguments' => array('aventure edit user traveler'),
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+    'file' => 'aventure_user_traveler.form.inc',
+  );
+
+  return $items;
+}
+
+/**
+* Implements hook_permission
+*/
+function aventure_user_traveler_permission() {
+  return array(
+    'aventure create user traveler' => array(
+      'title' => t('Administer create user traveler'),
+      'description' => t('Perform administration user traveler.'),
+    ),
+    'aventure edit user traveler' => array(
+      'title' => t('Administer edit user traveler'),
+      'description' => t('Perform administration user traveler.'),
+    ),
+  );
+}
+
+/**
+* Implements hook_entity_insert,
+*/
+function aventure_user_traveler_entity_insert($entity, $type) {
+  if ($type == 'node' && $entity->type == 'testimony') {
+    $user = user_load($entity->uid);
+		$testimonies = isset($user->field_user_testimonies['und'][0]['value']) ? $user->field_user_testimonies['und'][0]['value'] : FALSE;
+		//Actualizar el campo testimonio del usuario
+		if ($testimonies) {
+			$testimonies_array = drupal_json_decode($testimonies);
+			$testimonies_array[] = $entity->nid;
+			$user->field_user_testimonies['und'][0]['value'] = drupal_json_encode($testimonies_array);
+			user_save($user);
+		} else {
+			$user->field_user_testimonies['und'][0]['value'] = drupal_json_encode(array($entity->nid));
+			user_save($user);
+		}
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_user_traveler_block_info() {
+	$blocks = array();
+	$blocks['block_user_treveler_testimonies'] = array(
+		'info' => 'Testimonies user traveler',
+	);
+	$blocks['block_reserve_testimonies'] = array(
+		'info' => 'block reserve offers',
+	);
+	$blocks['block_user_treveler_other_testimonies'] = array(
+		'info' => 'Others testimonies user',
+	);
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_user_traveler_block_view($delta = '') {
+	$block = array();
+	switch ($delta) {
+		case 'block_user_treveler_testimonies':
+			$block['subject'] = t('My testimonys');
+			$block['content'] = aventure_user_traveler_content();
+			break;
+		case 'block_reserve_testimonies':
+			$block['content'] = aventure_user_traveler_reserve();
+			break;
+		case 'block_user_treveler_other_testimonies':
+			drupal_add_js(drupal_get_path('module', 'aventure_user_traveler') .'/js/aventure_user_traveler.js', 'file');
+			$actual = menu_get_object();
+			if (isset($actual->type) && $actual->type == 'testimony') {
+				$result = db_select('node', 'n')
+			    ->fields('n')
+			    ->condition('type', 'testimony','=')
+			    ->condition('status', 0,'>')
+			    ->condition('uid', $actual->uid, '=')
+			    ->execute()
+			    ->fetchAll();
+				if ($result != NULL && count($result) > 1) {
+					$user = user_load($actual->uid);
+					$name = isset ($user->field_user_name['und'][0]['value']) ? $user->field_user_name['und'][0]['value'] : $user->name;
+					$block['subject'] = t('Some destinations that visited') . ' ' . $name;
+					$block['content'] = aventure_user_traveler_other_testimonies($actual->vid, $result, $user->uid);
+				} else {
+					return $block;
+				}
+			}
+			break;
+		default:
+			# code...
+			break;
+	}
+	return $block;
+}
+
+function aventure_user_traveler_other_testimonies($vid = 0, $result, $uid) {
+	$content = array();
+	$aux = FALSE;
+	$i = 1;
+	$content['image'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array(drupal_html_class('block-image'))
+    ),
+  );
+	foreach ($result as $key => $value) {
+		if ($value->nid != $vid && $i <= 3) {
+			$node = node_load($value->vid);
+			$content['image']['testimony_' . $value->vid] = array(
+				'#type' => 'container',
+    		'#attributes' => array(
+      		'class' => array(drupal_html_class('block-image'), 'image-' . $value->vid)
+    		),
+			);
+			$content['image']['testimony_' . $value->vid]['image'] = array(
+				'#type' => 'html_tag',
+		    '#tag' => 'div',
+		    //'#value' => theme('image', array('path' => isset($node->field_images['und'][0]['uri']) ? $node->field_images['und'][0]['uri'] : NULL, 'getsize' => TRUE, 'attributes' => array('class' => 'thumb'))),
+		    '#value' => theme('image_style', array(
+			    'style_name' => '165x165',
+			    'path' => isset($node->field_images['und'][0]['uri']) ? $node->field_images['und'][0]['uri'] : NULL,
+			    'attributes' => array('class' => 'thumb')
+			  )),
+		    '#attributes' => array(
+      		'class' => array(drupal_html_class('image'))
+    		),
+			);
+			$term = @taxonomy_term_load(@$node->field_lugar['und'][0]['tid']);
+			$content['image']['testimony_' . $value->vid]['title'] = array(
+				'#type' => 'html_tag',
+		    '#tag' => 'div',
+		    '#value' => isset($term->name) ? $term->name : $node->title,
+		    '#attributes' => array(
+      		'class' => array(drupal_html_class('title'))
+    		),
+			);
+			$aux = TRUE;
+			$i++;
+		}
+	}
+	if ($aux) {
+		$result = db_select('node', 'n')
+			->fields('n')
+	    ->condition('type', 'hotel','=')
+	    ->condition('status', 0,'>')
+	    ->condition('uid', $uid, '=')
+	    ->execute()
+	    ->fetchAll();
+	  $hoteles = '';
+	  foreach ($result as $key => $value) {
+	  	$hoteles.= l($value->title, 'node/' . $value->nid) . ', ';
+	  }
+	  $content['text'] = array(
+	    '#type' => 'container',
+	    '#attributes' => array(
+	      'class' => array(drupal_html_class('block-text'))
+	    ),
+	  );
+		$content['text']['testimony_hotel'] = array(
+	    '#type' => 'html_tag',
+	    '#tag' => 'div',
+	    '#value' => t('hotels was hosted on his visit to Colombia') . ': ' . '<div class="hotels-visit"' . $hoteles . '</div>',
+	  );
+	}
+	return $content;
+}
+
+/**
+ * function get content testimonies user traveler
+ */
+function aventure_user_traveler_content() {
+	$content = array();
+	global $user;
+	$user = user_load($user->uid);
+	$testimonies = isset($user->field_user_testimonies['und'][0]['value']) ? $user->field_user_testimonies['und'][0]['value'] : FALSE;
+	if ($testimonies) {
+		$content['#markup'] = aventure_user_traveler_testimonies($testimonies);
+		return $content;
+	} else {
+		return l(t('Create testimony'), 'node/add/testimony', array('attributes' => array('class' => array('link-create-testimony'))));
+	}
+}
+
+/**
+ * function mapin tertimonies
+ */
+function aventure_user_traveler_testimonies($testimonies) {
+	$testimonies_array = drupal_json_decode($testimonies);
+	$links = array();
+	if (!is_array($testimonies_array)) {
+		$node_testimonies = node_load($testimonies_array);
+			$links[] = l($node_testimonies->title, 'edit_testimony/' . $testimonies_array);
+	} else {
+		foreach ($testimonies_array as $value) {
+			$node_testimonies = node_load($value);
+			if ($node_testimonies)
+				$links[] = l($node_testimonies->title, 'edit_testimony/' . $value);
+		}
+	}
+	$link_new_testimony = l(t('Create testimony'), 'node/add/testimony', array('attributes' => array('class' => array('link-create-testimony'))));
+	return theme('item_list', array('items' => $links)) . $link_new_testimony;
+}
+
+/**
+ * function validate testimony the user
+ */
+function aventure_user_traveler_validate_testimony($nid) {
+	global $user;
+	$user = user_load($user->uid);
+	$testimonies = isset($user->field_user_testimonies['und'][0]['value']) ? $user->field_user_testimonies['und'][0]['value'] : FALSE;
+	if ($testimonies) {
+		$testimonies = drupal_json_decode($testimonies);
+		$search = array_search($nid, $testimonies);
+		if ($search || $search === 0)
+			return TRUE;
+		else
+			return FALSE;
+	} else {
+		return FALSE;
+	}
+}
+
+
+/**
+ * Implements hook_node_view().
+ */
+function aventure_user_traveler_node_view($node, $view_mode, $langcode) {
+	if ($node->type == 'testimony') {
+		$user = user_load($node->uid);
+		$autor_name = isset ($user->field_user_name['und'][0]['value']) ? $user->field_user_name['und'][0]['value'] : $user->name;
+		$actual = menu_get_object();
+
+		if (isset($actual->type) && $actual->type == 'testimony') {
+			$node->content['field_tips']['#prefix'] = '<h2>' . t('The advice of') . ' ' . $autor_name . '</h2>';
+			$node->content['field_lugar']['#prefix'] = '<h2>' . t('Some destinations visit') . ' ' . $autor_name . '</h2>';	
+		}
+		$lugares = isset($node->content['field_lugar']['#items']) ? $node->content['field_lugar']['#items'] : array();
+		if (count($lugares) <= 3) {
+			return $node;
+		} else {
+			$num = 3;
+		}
+		$random = array_rand($node->content['field_lugar']['#items'], $num);
+		$news_items = array();
+		foreach ($random as $key => $value) {
+			$news_items[$value] = $node->content['field_lugar']['#items'][$value];
+		};
+		$node->content['field_lugar']['#items'] = $news_items;
+		return $node;
+	}
+}
+
+/**
+ * Function for reserve
+ */
+function aventure_user_traveler_reserve() {
+	$content = array();
+	$node = menu_get_object();
+	$user = user_load($node->uid);
+	$autor_name = isset ($user->field_user_name['und'][0]['value']) ? $user->field_user_name['und'][0]['value'] : $user->name;
+  $content['title'] = array(
+    '#type' => 'html_tag',
+    '#tag' => 'h2',
+    '#value' => t('Would you like a trip like') . ' ' . $autor_name,
+  );
+  $content['descripcion'] = array(
+    '#type' => 'html_tag',
+    '#tag' => 'span',
+    '#value' => 'we have an offer for you',
+  );
+  $content['link']['#markup'] = l(t('book deals'), 'node', array('attributes' => array('class' => 'botton-reserve')));
+  return $content;
+
+}

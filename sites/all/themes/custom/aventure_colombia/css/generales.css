@@ -1,0 +1,446 @@
+
+body{
+  background: #EBE9D8;
+}
+/*--------------- Font Family -----------*/
+
+@font-face {
+  font-family: 'Raleway';
+}
+/**general**/
+#main #content.column {
+  width: 100%;
+  padding: 0 0 0 0;
+  margin: 0;
+}
+h1#site-name {
+  float: none;
+  margin: 0;
+  font-size: 20px;
+}
+.content ul li {
+  list-style-image: url('../img/list-li-img.png') no-repeat center left transparent;
+  list-style: url('../img/list-li-img.png') no-repeat center left transparent;
+}
+/**regions**/
+#header-wrapper,
+#footer-wrapper,
+.region-secondary-menu,
+.block-aventure-mail-suscription,
+#question-about-trip-home {
+  max-width: 1140px;
+  margin: auto;
+}
+/**Message***/
+#messages-wrapper {
+  clear: both;
+}
+.messages {
+  border-radiu: 5px;
+  padding: 25px 20px 25px 55px;
+  margin:10px;
+  border: none;
+  font-size: 14px;
+  color: #000;
+}
+.messages.error{
+  background: url(../img/message-error-icon.png) no-repeat 14px 14px #FBD0CF;
+  color: #000;
+}
+/*****TITLES*****/
+.region-traveled-with-us-agency .title-agency,
+.region-block-map-region h2 {
+  font-family: 'proxima_nova_condensed';
+  font-weight:100;
+  font-style: normal;
+  font-size: 22px;
+  color: #65614C;
+  text-transform: uppercase;
+}
+
+/**testimonios fondo naraja**/
+.node.field-name-field-highlighted-phrase .field-item {
+  background:#CB4D19;
+  color: #EBE9D7;
+  font-size: 24px;
+  font-weight: 100;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  padding: 5px 8px;
+  width: auto;
+  font-family: 'proxima_nova_condensed';
+}
+
+.node-hotel .node-testimony .main-phrase,
+.node-evento .node-testimony .main-phrase,
+#tab-4 .every-testimony-package .main-phrase,
+.node-miembro-equipo .field-name-field-highlighted-phrase,
+.node-question .field-name-body,
+.node-testimony .field-name-field-highlighted-phrase,
+.node.view-mode-full .field-name-field-highlighted-phrase,
+.node-testimony .flexslider_strong_points ul li  {
+  background: url(../img/comillas.png) no-repeat left top  transparent;
+  padding-left: 55px;
+  overflow: hidden;
+  margin-bottom: 1em;
+  clear: both;
+}
+.node-type-prensa .field-name-field-highlighted-phrase {
+  text-align: center;
+  margin-bottom: 5px;
+}
+.node-evento .node-testimony .main-phrase {
+  width: 417px;
+}
+#tab-4 .every-testimony-package .main-phrase {
+  clear: none;
+}
+.node.view-mode-full .ds-right-event .field-name-field-highlighted-phrase {
+  background: no-repeat;
+  padding: 0;
+}
+/******links****/
+  /*link felcha naranja*/
+  .tb-megamenu .row-fluid li a.botton-megamenu,
+  /*.node-testimony .content a,*/
+  .page-packages .price-wrapper .see-node a,
+  .list_hotels_portadilla .hotel-link-wrapper a,
+  .view-content.masonry .views-field-nid .see-node a,
+  .results-hotels .row-result-hotel-city .views-field-nid .effect-up-hotel a,
+  .view-content.masonry .views-field-nid .link-to-member a,
+  .tb-megamenu .dropdown-menu a.botton-megamenu,
+  #block-views-miembros-block .views-field-php .see-node a,
+.view .date-nav-wrapper .date-prev a,
+.view .date-nav-wrapper .date-next a,
+.node-type-paquete  #tabs a.see-node,
+ul.mini_portadilla_package li .see-node a,
+a.more_testimonies {
+  background: url(../img/flechas.png) left -55px no-repeat;
+  bottom: 9px;
+  color: #CC4D1A;
+  padding: 9px 7px 8px 36px;
+  text-transform: uppercase;
+  display: block;
+  float: right;
+  font-family: 'proxima_nova_condensed';
+  font-weight:100;
+  font-style: normal;
+  }
+  #header #main-menu .mega-dropdown-inner .tb-megamenu-block li a.ver-todo {
+  float: left;
+  }
+
+  /***link "book it"***/
+.node-hotel .field-name-hotel-reservation a,
+.node-fotografia .contact-button a,
+.node-miembro-equipo .contact-button a,
+.node-prensa .contact-button a,
+.node-question #block-block-8 .qa-botton a,
+.field-name-pensando-en-viajar-a-colombia a.qa-link {
+  background: #CB4D19;
+  border-radius: 20px;
+  color: #FFF;
+  padding: 7px 20px;
+  font-family: 'proxima_nova_condensed';
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+/*Titulo vaja naranja (Tooltip)*/
+
+#meet-our-agency h2 {
+color: #fff;
+text-transform: uppercase;
+font-size: 1em;
+border-radius: 3px;
+font-family: 'proxima_nova_condensed';
+background: #CF4B27;
+padding:10px 15px;
+display: inline-block;
+  margin-left: 36%;
+  margin-right: 3%;
+  margin-bottom: 65px;
+}
+
+/**orange submit**/
+footer input[type="submit"],
+.block-aventure-user-traveler a.botton-reserve {
+  background: #CB4D19;
+  border: 0;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 13px;
+  float: right;
+  padding: 7px 24px;
+}
+.node-testimony .content a.botton-reserve,
+a.botton-reserve {
+  display: inline-block;
+    float: none;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 5px 20px;
+    width: auto;
+}
+/**Separador**/
+.separator-home{
+  background: url(../img/line_zone.png) repeat-x ;
+  display: block;
+  height: 30px;
+  margin: 30px 0;
+  width: 100%;
+}
+
+/**nodos**/
+.node-fotografia.view-mode-full{
+  padding: 65px 0 50px 0;
+}
+.field-name-body p {
+  font-weight: 300;
+  font-family: 'Raleway';
+  font-size: 15px;
+  color: #000;
+}
+/**frase**/
+.field-name-field-highlighted-phrase,
+.node-fotografia .contact-button h3,
+.node-hotel .field-name-hotel-reservation h3{
+  font-weight: 300;
+  font-size: 25px;
+  line-height: 30px;
+  margin-bottom: 25px;
+  padding: 0 10%;
+  text-align: center;
+  overflow: hidden;
+  font-family: 'Raleway';
+}
+/*********/
+
+/****tabs****/
+#tabs {
+  background: none;
+  border:none;
+  margin-bottom: 100px;
+  font-family: 'Raleway';
+  font-weight: 100;
+  color: #262626;
+}
+#tabs .ui-tabs .ui-tabs-vertical .ui-tabs-nav {
+  width: 239px;
+  padding: 14px 25px;
+  font-size: 16px;
+}
+#tabs .ui-tabs .ui-tabs-panel p {
+  font-size: 12px;
+}
+
+/*****countdown-super-container***/
+.countdown-super-container {
+  font-family: 'Raleway';
+  font-weight: 100;
+}
+
+/*****TABLE****/
+table {
+background: #E2E0CA;
+margin-bottom: 1.25em;
+border: none;
+}
+tbody {
+border-top: none;
+}
+
+table tr:nth-of-type(even),
+tr.even,
+tr.odd  {
+background: #DCD9C3;
+border: none;
+}
+table th {
+background: #9D9B8C;
+color:#fff;
+text-align: center;
+}
+table tr > td {
+  font-weight: 400;
+  text-align: right;
+}
+table tr td {
+  text-align: left;
+}
+table thead tr th,
+table thead tr td,
+table tfoot tr th,
+table tfoot tr td,
+table label {
+  color: #fff;
+  padding: 6px;
+}
+/******/
+.field-name-field-idiomas .field-item  img {
+  width: 16px;
+  height: 11px;
+}
+
+
+/***********Calendario**********/
+
+.view-calendar .views-exposed-form {
+  width: 100%;
+  text-align: right;
+}
+.view-calendar .views-exposed-form label {
+  font-weight: 100;
+  float: left;
+  padding: 2px;
+}
+.view-calendar .views-exposed-form .form-item {
+  float: left;
+  margin-right: 5px;
+}
+.view-calendar .views-exposed-form .form-item .form-type-bef-checkbox input {
+float: left;
+margin: 3px 5px 0;
+}
+.view-calendar .views-exposed-form .views-widget {
+  float: left;
+}
+.view-calendar .views-exposed-form .views-exposed-widget {
+  float: right;
+}
+.calendar-calendar table tr,
+.calendar-calendar .month-view .full td.single-day .calendar-empty,
+.calendar-calendar .month-view .full td.single-day.empty,
+.calendar-calendar .month-view .full td.date-box.empty {
+    background: none repeat scroll 0 0 #F4F4F4;
+} {
+  background-color: transparent;
+}
+.calendar-calendar table.full tr th,
+.calendar-calendar th.days {
+  background-color: #EBE9D8;
+  border: none;
+  color: #111111;
+  font-weight: 100;
+}
+.calendar-calendar table tr,
+.calendar-calendar .month-view .full td.single-day .calendar-empty,
+.calendar-calendar .month-view .full td.single-day.empty,
+.calendar-calendar .month-view .full td.date-box.empty {
+background: transparent;
+}
+.calendar-calendar .month-view .full td .inner div.day,
+.calendar-calendar .month-view .full td .inner div.day a {
+  color: #111111;
+  float: left;
+  font-weight: 100;
+  padding: 0 5px;
+}
+.calendar-calendar th.days {
+  padding: 6px;
+}
+.calendar-calendar td.single-day {
+  position: relative;
+}
+.calendar-calendar td.single-day .tooltip-evento,
+.calendar-calendar td.single-day:hover .calendar.monthview  span.tooltip  {
+  display: none;
+}
+.calendar-calendar td.single-day .tooltip-global-event  {
+  position: relative;
+}
+.calendar-calendar td.single-day:hover .tooltip-evento,
+.calendar-calendar td.single-day:hover .calendar.monthview span.tooltip  {
+  display: block;
+}
+.calendar-calendar .month-view .full td.single-day div.monthview,
+.calendar-calendar .week-view .full td.single-day div.weekview,
+.calendar-calendar .day-view .full td.single-day div.dayview {
+  background-color:transparent;
+}
+.calendar-calendar .inner .calendar.monthview .tooltip-evento {
+ background-color: #FFFFFF !important;
+    border: 6px solid #AFAA85;
+    border-radius: 0 0 0 0;
+    height: 132px;
+    left: -50%;
+    padding: 11px 17px;
+    position: absolute;
+    top: -10px;
+    width: 344px;
+    z-index: 5;
+  -moz-box-shadow: 5px 10px 10px #898982;
+-webkit-box-shadow: 5px 10px 10px #898982;
+box-shadow: 5px 10px 10px #898982;
+}
+.calendar-calendar .inner .calendar.monthview .tooltip-global-event {
+   height: 132px;
+    left: -50%;
+    padding: 11px 17px;
+    position: absolute;
+    top: -10px;
+    width: 344px;
+}
+.calendar-calendar .inner .calendar.monthview span.tooltip {
+  background: url("../img/bg-tooltip-arrow.png") no-repeat scroll 0 0 transparent;
+    float: right;
+    height: 39px;
+    left: 47%;
+    padding: 0;
+    position: absolute;
+    top: -10px;
+    width: 31px;
+}
+.calendar-calendar .inner .calendar.monthview .tooltip-evento .imagen {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: top;
+    width: 31%;
+}
+.calendar-calendar .inner .calendar.monthview .tooltip-evento .content{
+  display: inline-block;
+  width: 64%;
+  margin: 0;
+  float: right;
+}
+.calendar-calendar .inner .calendar.monthview .tooltip-evento .content span.info a{
+  background: url(../img/bg-link-calendra-event.png) no-repeat scroll left center transparent;
+  padding-left: 20px;
+  display: block;
+  font-weight: 400;
+  margin-top: 10px;
+}
+.calendar-calendar .inner .calendar.monthview .tooltip-evento .content h4{
+  font-weight: 400;
+}
+.calendar-calendar .month-view .full td.single-day div.monthview,
+.calendar-calendar .week-view .full td.single-day div.weekview,
+.calendar-calendar .day-view .full td.single-day div.dayview {
+  overflow: visible;
+  padding: 0 10px;
+}
+.calendar-calendar td,
+.calendar-calendar td.empty,
+.calendar-calendar .month-view .full td.date-box.today,
+.calendar-calendar .month-view .full tr td.single-day.today {
+  border: none;
+}
+.calendar-calendar  td.impar {
+  background: #DDDCC7;
+}
+.flexslider ul li {
+  list-style: none;
+}
+
+.mini_portadilla_package {
+  display: none;
+}
+.page-members .content .titles,
+.page-testimonies .content .titles,
+.page-photos .content .titles,
+.page-packages .content .titles,
+.page-hotels .content .titles {
+  margin-top: 75px;
+  position:relative
+  left:-10px;
+}

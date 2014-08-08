@@ -1,0 +1,358 @@
+<?php
+
+/*
+ * Implementation of Hook_block_info()
+ */
+
+function aventure_contact_block_info() {
+
+	$blocks['contact_form'] = array(
+		'info' => t('Aventure Contact Information')
+	);
+
+	$blocks['contact_info'] = array(
+		'info' => t('Aventure Contact Form'),
+		'cache' => DRUPAL_NO_CACHE,
+	);
+
+  $blocks['hotel_reservation'] = array(
+    'info' => t('Hotel Reservation'),
+  );
+
+  $blocks['hotel_reservation_bottom'] = array(
+    'info' => t('Hotel Reservation Bottom'),
+  );
+
+  $blocks['discount_package_20'] = array(
+    'info' => t('20% discount'),
+  );
+
+  $blocks['questions_about_the_trip'] = array(
+    'info' => t('Questions about the trip'),
+  );
+
+  $blocks['questions_about_colombia'] = array(
+    'info' => t('Questions about Colombia'),
+  );
+
+  $blocks['make_package_reservation'] = array(
+    'info' => t('Make package reservation'),
+  );
+
+  $blocks['photo_go_package'] = array(
+    'info' => t('Photo go package'),
+  );
+
+  return $blocks;
+}
+
+/**
+ *  Implementation of hook_block_view().
+ */
+function aventure_contact_block_view($delta = '') {
+    $block = NULL;
+
+	switch ($delta) {
+		case 'contact_info':
+			$block['subject'] = t('Aventure Colombia');
+			$block['content'] =  aventure_contact_info();
+			break;
+
+		case 'contact_form':
+			$block['subject'] = t('Quick contact');
+			$block['content'] = aventure_contact_form();
+			break;
+
+    case 'hotel_reservation':      
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node)) {
+        $block['subject'] = t('Hotel Reservation');
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $block['content'] = hotel_reservation_html_block($node_wrapper); 
+      }      
+      break;
+
+    case 'hotel_reservation_bottom':      
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node)) {
+        $block['subject'] = t('Hotel Reservation Bottom');
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $block['content'] = hotel_reservation_html_block_bottom($node_wrapper); 
+      }      
+      break;
+
+    case 'discount_package_20':      
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node)) {
+        $block['subject'] = t('20% discount');
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $block['content'] = discount_20($node_wrapper); 
+      }      
+      break;
+
+    case 'questions_about_the_trip':
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node)) {
+        $block['subject'] = t('Questions about the trip');
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $render = questions_about_trip_wrapper($node_wrapper);
+        $block['content'] = render($render);
+      }      
+      break;
+
+    case 'questions_about_colombia':
+      $block['subject'] = t('Questions about Colombia');
+      $block['content'] = drupal_get_form('questions_about_colombia');
+      break;
+
+    case 'make_package_reservation':    
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node)) {
+        $block['subject'] = t('Make package reservation');
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $renderable_make_reservation = make_package_reservation($node_wrapper);
+        $block['content'] = render($renderable_make_reservation);
+      }      
+      break;
+
+    case 'photo_go_package':    
+      $node = menu_get_object();      
+      // Check if node exists
+      if (!empty($node)) {
+        $block['subject'] = t('Photo go package');
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $renderable_go_package = photo_go_package($node_wrapper);        
+        $block['content'] = render($renderable_go_package);
+      }      
+      break;  
+	}
+
+	return $block;
+}
+
+/*
+ * Implementation of hook_alter_form()
+ */
+function aventure_contact_form_alter(&$form, &$form_state, $form_id) {
+  // Alter contact form to become it in a quick contact format
+  switch($form_id) {
+    case 'webform_client_form_39':
+      global $user;
+
+      // Remove lables
+      $form['submitted']['name']['#title'] = '';
+      $form['submitted']['name']['#placeholder'] = 'Name';
+      $form['submitted']['email']['#title'] = '';
+      $form['submitted']['email']['#placeholder'] = 'Email';
+      $form['submitted']['message']['#title'] = '';
+      $form['submitted']['message']['#placeholder'] = 'Message';
+
+      $form['actions']['submit']['#ajax' ] = array(
+        'callback' => 'aventure_contact_ajax_callback',
+        'wrapper' => str_replace('_','-',$form['#form_id']),
+      );      
+
+      $form['#submit'][] = 'aventure_contact_ajax_form_submit';
+
+    break;
+  }
+}
+
+/**
+ * Implementation of hook_ajax_form_submit()
+ */
+function aventure_contact_ajax_form_submit(&$form, &$form_state) {
+  //You'll get an error about undefined index without this
+  $form_state['rebuild'] = FALSE;
+}
+
+/**
+ * Implementation of hook_ajax_callback()
+ */
+function aventure_contact_ajax_callback(&$form, &$form_state) {
+
+    if(form_get_errors()){
+        return $form;
+    }
+    else{
+        return '<div id="contact-message">' . t('Your message has been sent successfully. We will reply you as soon as possible.') . '</div>';
+    }
+}
+
+function aventure_contact_form() {
+
+  $output = NULL;
+  $block_contact = module_invoke('webform', 'block_view', 'webform-client-form-39');
+
+  $output .= '<h4>' . t('Quick contact') . '</h4>';
+
+  $output .= render($block_contact['content']);;
+
+  return $output;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_contact_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_contact_info' => array(
+      'variables' => array(),
+      'template' => 'aventure_contact_info',
+      'path' => $path . '/templates',
+    ),
+    'aventure_hotel_reservation' => array(
+      'variables' => array(),
+      'template' => 'aventure_hotel_reservation',
+      'path' => $path . '/templates',
+    ),
+    'aventure_hotel_reservation_bottom' => array(
+      'variables' => array(),
+      'template' => 'aventure_hotel_reservation_bottom',
+      'path' => $path . '/templates',
+    ),
+    'aventure_20_discount' => array(
+      'variables' => array(),
+      'template' => 'aventure_20_discount',
+      'path' => $path . '/templates',
+    ),
+    'aventure_go_package' => array(
+      'variables' => array(),
+      'template' => 'aventure_photo_go_package',
+      'path' => $path . '/templates',
+    ),
+
+  );
+}
+
+function aventure_contact_info() {
+	$output = NULL;
+
+	$output .= '<h4>' . t('Aventure Colombia') . '</h4>';
+	$output .= theme('aventure_contact_info');
+
+	return $output;
+}
+
+function hotel_reservation_html_block($node_wrapper) {
+  $output = theme('aventure_hotel_reservation',
+    array('nid' => $node_wrapper->nid->value(), 'hotel_name' => $node_wrapper->title->value()));
+  return $output;
+}
+
+function hotel_reservation_html_block_bottom($node_wrapper) {
+  $output = theme('aventure_hotel_reservation_bottom',
+    array('nid' => $node_wrapper->nid->value(), 'hotel_name' => $node_wrapper->title->value()));
+  return $output;
+}
+
+function discount_20($node_wrapper) {
+  $output = theme('aventure_20_discount',
+    array('nid' => $node_wrapper->nid->value()));
+  return $output;
+}
+
+function photo_go_package($node_wrapper) {
+  $output = theme('aventure_go_package',
+    array('key_word' => $node_wrapper->field_lugar->value()->name)
+  );
+  return $output;
+}
+
+function questions_about_trip($form, $form_state, $node_wrapper) {
+  $form = array();
+
+  $form['question'] = array(
+    '#type' => 'textfield',
+    '#placeholder' => t('What is the best time to ...'),
+  );
+
+  $form['send'] = array(
+    '#type' => 'submit',
+    '#value' => t('Ask'),
+  );
+
+  return $form;
+}
+
+function questions_about_trip_wrapper($node_wrapper) {
+  $render = array();
+
+  $render['title'] = array(
+    '#markup' => "<div class='question-trip'>" . t('Do you have questions about the trip: @title', array(
+      '@title' => $node_wrapper->title->value(),
+    )) . "</div>",
+  );
+
+  $render['subtitle'] = array(
+    '#prefix' => '<p class="subtitle-question-form">',
+    '#markup' => t('We will answer as soon as posible'),
+    '#suffix' => '</p>',
+  );
+
+  $form = drupal_get_form('questions_about_trip', $node_wrapper);
+  $render['form'] = array(
+    '#markup' => render($form),
+  );
+
+  return $render;
+}
+
+function questions_about_colombia() {
+  $form = array();
+
+  $form['tit'] = array(
+    '#markup' => '<div class="q-colombia">' . t('¿Do you have questions about your trip to Colombia?') . '</div>',
+  );
+
+  $form['sub_tit'] = array(
+    '#markup' => '<div class="sbt-colombia-travel">' .
+      t('We will answer as soon as posible...') . '</div>',
+  );
+
+  $form['question'] = array(
+    '#prefix' => '<div class="questions-about-colombia">',
+    '#field_prefix' => '<div class="question">',
+    '#field_suffix' => '</div>',
+    '#type' => 'textfield',
+    '#placeholder' => t('is it danger...?'),
+  );
+
+  $form['ask'] = array(
+    '#type' => 'submit',
+    '#value' => t('Ask'),
+    '#suffix' => '</div>',
+  );
+
+  return $form;
+}
+
+function make_package_reservation($node) {
+  $render = array();
+
+  $render['tit'] = array(
+    '#markup' => t('¿Would you like to travel to @title?',
+      array('@title' => $node->title->value())),
+  );
+
+    $msg_for_sub_tit = "<div class='subt-pqt'>" . t('From ') .
+    "-{$node->field_paquete_precio->value()},
+    {$node->field_paquete_duracion->value()}- </div>";
+
+    $render['sub_tit'] = array(
+      '#markup' =>  $msg_for_sub_tit,
+    );
+
+
+  $render['reserve'] = array(
+    '#type' => 'button',
+    '#value' => t('¡Book it!'),
+  );
+
+  return $render;
+}

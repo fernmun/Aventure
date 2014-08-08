@@ -1,0 +1,9 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+	precomposeunicode = false
+[remote "openshift"]
+	url = ssh://51d0819c4382ec7d6e0000fa@main-aventurecolombia.rhcloud.com/~/git/main.git/
+	fetch = +refs/heads/*:refs/remotes/openshift/*

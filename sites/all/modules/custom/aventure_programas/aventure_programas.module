@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_programas_block_info() {
+  $blocks = array();
+
+  $blocks['programs_in_packages'] = array(
+    'info' => t('Programs in packages'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_programas_block_view($delta) {
+  $block = array();
+
+  switch ($delta) {
+    case 'programs_in_packages':
+      $block['subject'] = t('Programs in packages');
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $programs_info = renderable_array_programs_in_packages($node_wrapper);
+      $block['content'] = render($programs_info);
+      break;
+  }
+
+  return $block;
+}
+
+function renderable_array_programs_in_packages($node_wrapper) {
+  $render = array();
+
+  $render['opening'] = array(
+    '#prefix' => '<div class="programs_in_packages">',
+  );
+
+  $render['title'] = array(
+    '#markup' => '<div> <h3>' . $node_wrapper->title->value() . '</h3> <span>'
+    . t('Meet the schedule of your trip...') . '</span> </div>',
+  );
+
+  $nodes_to_display = load_programs_in_package($node_wrapper);
+  $number_day = 1;
+  foreach ($nodes_to_display as $every_program) {
+
+    $every_program = entity_metadata_wrapper('node', $every_program);
+    $image_info = $every_program->field_prog_imagen->value();
+    $path_to_image_thumbnail = image_style_url('174x132', $image_info['uri']);
+
+    $html = theme('aventure_program_in_package_item', array(
+      'nid' => $every_program->nid,
+      'image' => theme('image', array(
+        'path' => $path_to_image_thumbnail,
+        'attributes' => array('class' => array('image-destiny-package')))
+      ),
+      'title' => $every_program->title->value(),
+      'name_destination' => $every_program->field_prog_nombre_destino->value(),
+      'number_day' => $number_day,
+      'body' => $every_program->body->value(),
+    ));
+
+    $render['programa-' . $number_day] = array(
+      '#markup' => $html,
+    );
+
+    $number_day++;
+  }
+
+  $render['ending'] = array(
+    '#suffix' => '</div>',
+  );
+
+  return $render;
+}
+
+function load_programs_in_package($node_wrapper) {
+  $programs = array();
+
+  foreach ($node_wrapper->field_paq_programa->value() as $every_program) {
+    $programs[] = $every_program->nid;
+  }
+
+  return node_load_multiple($programs);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_programas_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_program_in_package_item' => array(
+      'variables' => array(),
+      'template' => 'aventure_program_in_package_item',
+      'path' => $path . '/templates',
+    ),
+  );
+}

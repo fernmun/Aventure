@@ -1,0 +1,141 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_question_answer_block_info() {
+	$blocks = array();
+	$blocks['question_answer_statistics'] = array(
+		'info' => 'Estadisticas - pregunta, respuesta',
+	);
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function aventure_question_answer_block_view($delta = '') {
+	$block = array();
+	switch ($delta) {
+		case 'question_answer_statistics':
+			$block['subject'] = t('STATISTICS');
+			$block['content']['question'] = array(
+				'#type' => 'container',
+        '#attributes' => array('class' => 'question-qa'),
+        '0' => array(
+          '#theme' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => array('class' => 'count-qa'),
+          '#value' => get_count_node_by_type('question'),
+        ),
+        '1' => array(
+          '#theme' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => array('class' => 'label-qa'),
+          '#value' => t('Question'),
+        ),
+      );
+      $block['content']['answer'] = array(
+				'#type' => 'container',
+        '#attributes' => array('class' => 'answer-qa'),
+        '0' => array(
+          '#theme' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => array('class' => 'count-qa'),
+          '#value' => get_count_node_by_type('answer'),
+        ),
+        '1' => array(
+          '#theme' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => array('class' => 'label-qa'),
+          '#value' => t('Answer'),
+        ),
+      );
+      $block['content']['users'] = array(
+				'#type' => 'container',
+        '#attributes' => array('class' => 'user-qa'),
+        '0' => array(
+          '#theme' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => array('class' => 'count-qa'),
+          '#value' => '1',
+        ),
+        '1' => array(
+          '#theme' => 'html_tag',
+          '#tag' => 'span',
+          '#attributes' => array('class' => 'label-qa'),
+          '#value' => t('Users'),
+        ),
+      );
+			break;
+	}
+	return $block;
+}
+
+/**
+ * Function count node by type();
+ */
+function get_count_node_by_type($type = 'article') {
+	$result = db_select('node', 'n')
+      ->fields('n')
+ 			->condition('type', 'answer','=')
+    	->condition('status', 0,'>')
+      ->execute();
+ 		$num_of_results = $result->rowCount();
+ 		if (is_numeric($num_of_results))
+ 			return $num_of_results;
+ 		else return 0;
+}
+
+/**
+ * Implements hook_node_view_alter().
+ */
+function aventure_question_answer_node_view_alter(&$build) {
+  if ($build['#view_mode'] == 'full' && isset($build['field_best_answer']['#field_name'])) {
+    switch ($build['field_best_answer']['#field_name']) {
+      case 'field_best_answer':
+        $build['field_best_answer']['#prefix'] = '<div class="answers-best-answers"><h2>' . t('Best answer') . '</h2>';
+        $build['field_best_answer']['#suffix'] = '</div>';
+        $_SESSION['node_best_answer'] = $build['body']['#object']->vid;
+        break;
+      
+      default:
+        # code...
+        break;
+    }
+  } else {
+    if ($build['#bundle'] == 'answer') {
+      //$build['body']['#object']['#prefix'] = '<div class="answers-best-answers"><h2>' . t('Best answer') . '</h2>';
+      //$build['body']['#object']['#prefix'] = '</div>';
+      unset($build['best_answer']);
+      unset($build['select_best_answer']);
+    }
+  }
+}
+
+/**
+ *  Implements hook_node_view().
+ */
+function aventure_question_answer_node_view($node, $view_mode, $langcode) {
+  switch ($node->type) {
+    case 'question':
+      // Alter field_highlighted_phrase
+      $nombre = @$node->name;
+      $creado = date('D, d M', strtotime(@$node->created));
+
+      $phrase = $node->content['body'][0]['#markup'];
+      $field_highlighted_phrase = array(
+        '#markup' => '<div class="flexslider_strong_points"> <ul><li> <div> <p> ' . $phrase . ' </p> </div> </li></ul> </div><div class="asked-autor">asked: ' . $nombre . ',<span> </span><p>' . $creado . '</p></div>',
+      );
+      $node->content['body'] = $field_highlighted_phrase;
+      drupal_add_js("jQuery(document).ready(function(){
+        jQuery('.flexslider_strong_points li div p').wrapInner('<span>');
+      });",'inline');
+
+      break;
+    
+    default:
+      # code...
+      break;
+  }
+}

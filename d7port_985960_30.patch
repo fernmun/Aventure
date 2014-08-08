@@ -1,0 +1,525 @@
+diff --git a/viewsdisplaytabs.css b/viewsdisplaytabs.css
+index a12a0cf..7a55c37 100644
+--- a/viewsdisplaytabs.css
++++ b/viewsdisplaytabs.css
+@@ -70,4 +70,4 @@ table.viewsdisplaytabs-admin td:nth-child(4) {
+ 
+ form#-viewsdisplaytabs-admin dt {
+   font-weight: bold;
+-}
+\ No newline at end of file
++}
+diff --git a/viewsdisplaytabs.info b/viewsdisplaytabs.info
+index 6e6a39b..87c8ae4 100644
+--- a/viewsdisplaytabs.info
++++ b/viewsdisplaytabs.info
+@@ -2,4 +2,4 @@ name = Views Display Tabs
+ description = A module that exposes a view's displays as tabs.
+ package = Views
+ dependencies[] = views
+-core = 6.x
+\ No newline at end of file
++core = 7.x
+\ No newline at end of file
+diff --git a/viewsdisplaytabs.js b/viewsdisplaytabs.js
+index 8fee895..8ed2702 100644
+--- a/viewsdisplaytabs.js
++++ b/viewsdisplaytabs.js
+@@ -17,104 +17,109 @@
+ // Namespacing
+ viewsDisplayTabs = {};
+ 
++(function($) {
+ // Views Display Tabs behavior
+-viewsDisplayTabs.behavior = function() {
+-  
+-  // Since we piggy back on View's exposed filter form, we need to make sure
+-  // there is one. If this view has no exposed filters, we simply add a form.
+-  $.each(Drupal.settings.viewsdisplaytabs.views, function(view_name, value) {
+-    $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
+-      if (settings.view_name == view_name) {
+-        var form_id = 'views-exposed-form-' + settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-');
+-        var form_search = 'form#' + form_id;
+-        var view = $('div.view-id-' + view_name);
+-        var form = $(form_search, view);
+-        if (form.length == 0) {
+-          $(view)
+-          .append($('<div/>')
+-            .addClass("view-filters")
+-            .append($('<form/>')
+-              .attr('id', form_id)
+-              .attr('method', 'get')
+-              .attr('accept-charset', 'UTF-8')
+-              .attr('action', window.location.pathname)
+-            )
+-          );
++viewsDisplayTabs.behavior = {
++  attach : function() {
++
++    // Since we piggy back on View's exposed filter form, we need to make sure
++    // there is one. If this view has no exposed filters, we simply add a form.
++    $.each(Drupal.settings.viewsdisplaytabs.views, function(view_name, value) {
++      $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
++        if (settings.view_name == view_name) {
++          var form_id = 'views-exposed-form-' + settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-');
++          var form_search = 'form#' + form_id;
++          var view = $('div.' + i.replace(/views_dom_id:/g, 'view-dom-id-'));//$('div.view-id-' + view_name);
++          var form = $(form_search, view);
++          if (form.length == 0) {
++            $(view)
++            .append($('<div/>')
++              .addClass("view-filters")
++              .append($('<form/>')
++                .attr('id', form_id)
++                .attr('method', 'get')
++                .attr('accept-charset', 'UTF-8')
++                .attr('action', window.location.pathname)
++                .append('<input type="submit" id="edit-submit-' + view_name.replace(/_/g, '-') + '" name="" value="Apply" class="element-hidden form-submit">')
++              )
++            );
++          }
+         }
+-      }
++      });
+     });
+-  });
+ 
+-  // Attach handlers to tab links
+-  $('.viewsdisplaytabs-wrapper a:not(.viewsDisplayTabs-processed)')
+-  .each(function() {
+-    var elem = this;
++    // Attach handlers to tab links
++    $('.viewsdisplaytabs-wrapper a:not(.viewsDisplayTabs-processed)')
++    .each(function() {
++      var elem = this;
+ 
+-    // Get the id of the view whose header the tabs reside in through
+-    // its class attribute
+-    var parentView = $(elem).parents().filter('div.view').attr('class');
+-    var parentViewName = parentView.match(/view-id-(\w*)\s/);
+-    parentViewName = parentViewName[1];
++      // Get the id of the view whose header the tabs reside in through
++      // its class attribute
++      var parentView = $(elem).parents().filter('div.view').attr('class');
++      var parentViewName = parentView.match(/view-id-(\w*)\s/);
++      parentViewName = parentViewName[1];
+ 
+-    var tabset = false;
++      var tabset = false;
+ 
+-    $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
+-      
+-      if (settings.view_name == parentViewName) {
++      $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
+ 
+-        // Grab the existing form using the current display id
+-        var form = $('form#views-exposed-form-' + settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-'));
++        if (settings.view_name == parentViewName) {
+ 
+-        // Get the view
+-        var view = $('div.view-id-' + settings.view_name);
++          // Grab the existing form using the current display id
++          var form = $('form#views-exposed-form-' + settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-'));
+ 
+-        // Activate the tab that is the default active tab if no tab matches active the display
+-        $(elem).removeClass('viewsdisplaytabs-active');
+-        var default_display = Drupal.settings.viewsdisplaytabs.default_display[settings.view_name];
+-        var activetab = $('a[rel="' + settings.view_display_id + '"]', view).addClass('viewsdisplaytabs-active');
+-        if ($(activetab).length < 1) {
+-          $('a[rel="' + default_display + '"]', view).addClass('viewsdisplaytabs-active');
+-        }
++          // Get the view
++          var view = $('div.view-id-' + settings.view_name);
++
++          // Activate the tab that is the default active tab if no tab matches active the display
++          $(elem).removeClass('viewsdisplaytabs-active');
++          var default_display = Drupal.settings.viewsdisplaytabs.default_display[settings.view_name];
++          var activetab = $('a[rel="' + settings.view_display_id + '"]', view).addClass('viewsdisplaytabs-active');
++          if ($(activetab).length < 1) {
++            $('a[rel="' + default_display + '"]', view).addClass('viewsdisplaytabs-active');
++          }
+ 
+-        elem.submitForm = function() {
++          elem.submitForm = function() {
+ 
+-          // Update Views' setting object to reflect the new display_id
+-          Drupal.settings.views.ajaxViews[i].view_display_id = elem.rel;
++            // Update Views' setting object to reflect the new display_id
++            Drupal.settings.views.ajaxViews[i].view_display_id = elem.rel;
+ 
+-          // We need to change the form's id to reflect the updated display_id
+-          // or the behavior won't be attached
+-          $(form).attr('id', 'views-exposed-form-' + settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-'));
++            // We need to change the form's id to reflect the updated display_id
++            // or the behavior won't be attached
++            $(form).attr('id', 'views-exposed-form-' + settings.view_name.replace(/_/g, '-') + '-' + settings.view_display_id.replace(/_/g, '-'));
+ 
+-          // We remove the hidden field containing the view's current display id
+-          // We recreate it so that it will reflect the updated display_id
+-          $(form).find('input[name="view_display_id"]').remove();
+-          $(form).append('<input type="hidden" name="view_display_id" value="'+ settings.view_display_id +'"/>');
++            // We remove the hidden field containing the view's current display id
++            // We recreate it so that it will reflect the updated display_id
++            $(form).find('input[name="view_display_id"]').remove();
++            $(form).append('<input type="hidden" name="view_display_id" value="'+ settings.view_display_id +'"/>');
+ 
+-          // Append a throbber if enabled for this view
+-          if (Drupal.settings.viewsdisplaytabs.view_throbber[settings.view_name]) {
+-            $(this).after('<span class="views-throbbing">&nbsp</span>');
++            // Append a throbber if enabled for this view
++            if (Drupal.settings.viewsdisplaytabs.view_throbber[settings.view_name]) {
++              $(this).after('<div class="ajax-progress ajax-progress-throbber"><div class="throbber"> </div></div>');
++            }
++
++            // Add throbber class to indicate to the user we're working
++            $(this).addClass('throbbing');
++
++            // Submit the form
++            $('#edit-submit-' + settings.view_name.replace(/_/g, '-'), form).click();
+           }
+ 
+-          // Add throbber class to indicate to the user we're working
+-          $(this).addClass('throbbing');
+-          
+-          // Submit the form
+-          $(form).submit();
+         }
+-        
+-      }
+-    });
+-  })
+-  .bind('click', function() {
+-    this.submitForm();
+-    return false;
+-  })
+-  .addClass('viewsDisplayTabs-processed');
++      });
++    })
++    .bind('click', function() {
++      this.submitForm();
++      return false;
++    })
++    .addClass('viewsDisplayTabs-processed');
++  }
+ }
++})(jQuery);
+ 
+ // We recreate the Drupal.behaviors object to 'push' our behavior to the top
+ // thereby ensuring that it runs before anything else
+ viewsDisplayTabs.drupalbehaviors = Drupal.behaviors;
+ Drupal.behaviors = {};
+ Drupal.behaviors.viewsDisplayTabs = viewsDisplayTabs.behavior;
+-$.extend(Drupal.behaviors, viewsDisplayTabs.drupalbehaviors);
++jQuery.extend(Drupal.behaviors, viewsDisplayTabs.drupalbehaviors);
+diff --git a/viewsdisplaytabs.module b/viewsdisplaytabs.module
+index f948a9d..6dfe271 100644
+--- a/viewsdisplaytabs.module
++++ b/viewsdisplaytabs.module
+@@ -2,7 +2,7 @@
+ 
+ /**
+  * Copyright (C) 2010 imBridge NodeOne AB
+- * 
++ *
+  * @file
+  * Views Display Tabs - A module that exposes a view's displays as tabs.
+  *
+@@ -32,7 +32,7 @@
+ function viewsdisplaytabs_menu() {
+   $items = array();
+ 
+-  $items['admin/settings/viewsdisplaytabs'] = array(
++  $items['admin/config/user-interface/viewsdisplaytabs'] = array(
+     'title' => 'Views Display Tabs',
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('_viewsdisplaytabs_admin'),
+@@ -50,13 +50,13 @@ function viewsdisplaytabs_menu() {
+ function viewsdisplaytabs_theme($existing, $type, $theme, $path) {
+   return array(
+     '_viewsdisplaytabs_admin' => array(
+-      'arguments' => array('form' => null),
++      'render element' => 'form',
+     ),
+     'viewsdisplaytabs_tab' => array(
+-      'arguments' => array('title' => null, 'url' => null, 'display_name' => null),
++      'variables' => array('title' => null, 'url' => null, 'display_name' => null),
+     ),
+     'viewsdisplaytabs_tab_groups' => array(
+-      'arguments' => array('display' => null, 'group' => null, 'class' => null),
++      'variables' => array('display' => null, 'group' => null, 'class' => null),
+     ),
+   );
+ }
+@@ -69,14 +69,21 @@ function viewsdisplaytabs_theme($existing, $type, $theme, $path) {
+ function viewsdisplaytabs_preprocess_views_view(&$vars) {
+   global $base_path;
+ 
++  // no need for tabs here
++  if (arg(0) == 'admin') {
++    return;
++  }
++
+   $view = $vars['view'];
+   $empty = !(bool) count($view->result);
+   $settings = variable_get('viewsdisplaytabs_settings', array());
+-  $show = ( $empty ? $empty && $settings['view_show_empty'][$view->name] == 1 : true );
++  $show = isset($settings['view_show_empty'][$view->name]) && ( $empty ? $empty && $settings['view_show_empty'][$view->name] == 1 : true );
+ 
+-  if ($settings['view_enabled'][$view->name] == 1 && $show) {
++  if (isset($settings['view_enabled'][$view->name]) && $settings['view_enabled'][$view->name] == 1 && $show) {
+     $selected_displays = $settings['view_displays'][$view->name];
+ 
++    $use_ajax = FALSE;
++
+     // Collect displays and build grouping array
+     // If no displays are selected, include all displays
+     foreach ($view->display as $display_name => $display_data) {
+@@ -103,7 +110,13 @@ function viewsdisplaytabs_preprocess_views_view(&$vars) {
+         }
+ 
+         // Build a grouping array for later
+-        $displays[$group][] = theme('viewsdisplaytabs_tab', $title, $_GET['q'], $view->name, $display_name, $active);
++        $displays[$group][] = theme('viewsdisplaytabs_tab', array(
++          'title' => $title,
++          'url' => $_GET['q'],
++          'view_name' => $view->name,
++          'display_name' => $display_name,
++          'active' => $active
++        ));
+ 
+         // Use AJAX
+         $use_ajax = $use_ajax ? $use_ajax : $display_data->handler->view->use_ajax;
+@@ -113,15 +126,13 @@ function viewsdisplaytabs_preprocess_views_view(&$vars) {
+     // Build header, exclude displays that are attachments (or we'll end up
+     // with two sets of tabs)
+     if ($view->display_handler->definition['handler'] != 'views_plugin_display_attachment') {
+-      $header .= theme('viewsdisplaytabs_tab_groups', $displays, 'viewsdisplaytabs-tab-group');
++      // Assign header
++      $vars['header'] = theme('viewsdisplaytabs_tab_groups', array('displays' => $displays, 'class' => 'viewsdisplaytabs-tab-group'));
+     }
+ 
+-    // Assign header
+-    $vars['header'] .= $header;
+-
+     // If one of the displays of this view uses AJAX, add JS
+     if ($use_ajax) {
+-      $js = drupal_add_js();
++      $js = array();
+       $js['setting']['viewsdisplaytabs']['views'][$view->name] = $view->name;
+       $js['setting']['viewsdisplaytabs']['default_display'][$view->name] = $settings['view_displays_default'][$view->name];
+       $js['setting']['viewsdisplaytabs']['view_throbber'][$view->name] = $settings['view_throbber'][$view->name];
+@@ -139,9 +150,14 @@ function viewsdisplaytabs_preprocess_views_view(&$vars) {
+  *
+  * @param <type> $view
+  * @param <type> $display_id
+- * @param <type> $args 
++ * @param <type> $args
+  */
+ function viewsdisplaytabs_views_pre_view(&$view, &$display_id, &$args) {
++  // do not touch views loaded by ajax
++  if (request_path() == 'views/ajax') {
++    return;
++  }
++
+   $vdt = _viewsdisplaytabs_get_current_views_display_from_url();
+   if ($vdt && $view->name == $vdt->view_name) {
+     $view->set_display($vdt->display_name);
+@@ -162,12 +178,13 @@ function viewsdisplaytabs_views_pre_view(&$view, &$display_id, &$args) {
+  * @return
+  *     A rendered form
+  */
+-function theme__viewsdisplaytabs_admin($form) {
+-
++function theme__viewsdisplaytabs_admin($variables) {
+   // Overview table:
+   $header = array(t('Enabled'), t('Name'), t('Displays'), t('Default Active'), t('Show when empty'), t('Separator'), t('Throbber'), t('Edit'));
+ 
+-  $view_list = $form['views']['view_list'];
++  $form = $variables['form'];
++  $view_list = isset($form['views']['view_list']) ? $form['views']['view_list'] : array();
++  $rows = array();
+ 
+   if (isset($view_list['view_name']) && is_array($view_list['view_name'])) {
+     foreach (element_children($view_list['view_name']) as $key) {
+@@ -189,14 +206,14 @@ function theme__viewsdisplaytabs_admin($form) {
+   }
+ 
+   $form['views']['view_list'] = array(
+-    '#value' => theme('table', $header, $rows, array('class' => 'viewsdisplaytabs-admin')),
++    '#markup' => theme('table', array(
++      'header' => $header,
++      'rows' => $rows,
++      'attributes' => array('class' => array('viewsdisplaytabs-admin'))
++    ))
+   );
+ 
+-  drupal_add_css(drupal_get_path('module', 'viewsdisplaytabs') .'/viewsdisplaytabs.css');
+-
+-  $output .= drupal_render($form);
+-
+-  return $output;
++  return drupal_render_children($form);
+ }
+ 
+ 
+@@ -208,11 +225,14 @@ function theme__viewsdisplaytabs_admin($form) {
+  * @param string $view_name
+  * @param string $display_name
+  * @param bool $active
+- * 
++ *
+  * @return string A themed tab.
+  */
+-function theme_viewsdisplaytabs_tab($title, $url, $view_name, $display_name, $active = false) {
+-  return l(t($title), $url, array('attributes' => array('class' => 'viewsdisplaytabs-tab'. ( $active ? ' viewsdisplaytabs-active' : ''), 'rel' => $display_name), 'query' => array('vdt' => "$view_name|$display_name")));
++function theme_viewsdisplaytabs_tab($vars) {
++  extract($vars);
++  $classes = array('viewsdisplaytabs-tab');
++  if ($active) $classes[] = 'viewsdisplaytabs-active';
++  return l(t($title), $url, array('attributes' => array('class' => $classes, 'rel' => $display_name), 'query' => array('vdt' => "$view_name|$display_name")));
+ }
+ 
+ /**
+@@ -222,14 +242,21 @@ function theme_viewsdisplaytabs_tab($title, $url, $view_name, $display_name, $ac
+  * @param <type> $class
+  * @return <type>
+  */
+-function theme_viewsdisplaytabs_tab_groups($displays, $class) {
++function theme_viewsdisplaytabs_tab_groups($vars) {
++  $displays = $vars['displays'];
++  $class = array($vars['class']);
+   drupal_add_css(drupal_get_path('module', 'viewsdisplaytabs') .'/viewsdisplaytabs.css');
+-  
++
+   $out = '<div class="viewsdisplaytabs-wrapper">';
+   foreach ($displays as $group => $display_items) {
+     $out .= '<div class="viewsdisplaytabs-group-wrapper">';
+     $group = ( $group === 0 ? null : $group );
+-    $out .= theme('item_list', $display_items, $group, 'ul', array('class' => $class));
++    $out .= theme('item_list', array(
++      'items' => $display_items,
++      'title' => $group,
++      'type' => 'ul',
++      'attributes' => array('class' => $class)
++    ));
+     $out .= '</div>';
+   }
+   $out .= '</div>';
+@@ -250,8 +277,8 @@ function _viewsdisplaytabs_admin() {
+   $settings = variable_get('viewsdisplaytabs_settings', array());
+ 
+   $form = array();
+-  $form[] = array(
+-    '#value' => t("<p>Views Display Tabs exposes a view's displays as simple tabs which you can style as you like if you so choose.</p>"),
++  $form['head'] = array(
++    '#markup' => t("<h4>Views Display Tabs exposes a view's displays as simple tabs which you can style as you like if you so choose.</h4>"),
+   );
+   $form['help'] = array(
+     '#type' => 'fieldset',
+@@ -259,8 +286,8 @@ function _viewsdisplaytabs_admin() {
+     '#collapsible' => true,
+     '#collapsed' => true,
+   );
+-  $form['help'][] = array(
+-    '#value' => t("<p>It works with views that have (apart from the default display) <strong>at least two displays that render as HTML</strong> (page and block for example). These will become the tabs the user can click.</p>
++  $form['help']['instructions'] = array(
++    '#markup' => t("<p>It works with views that have (apart from the default display) <strong>at least two displays that render as HTML</strong> (page and block for example). These will become the tabs the user can click.</p>
+ 
+ <dl>
+ 	<dt>Enabled</dt>
+@@ -319,7 +346,7 @@ $form['views'] = array(
+     '#collapsed' => false,
+   );
+ 
+-  $views = views_get_all_views();
++  $views = views_get_enabled_views();
+ 
+   foreach ($views as $vid => $view) {
+ 
+@@ -327,25 +354,26 @@ $form['views'] = array(
+ 
+     $view_enabled = array(
+       '#type' => 'checkbox',
+-      '#default_value' => $settings['view_enabled'][$vid],
++      '#default_value' => isset($settings['view_enabled'][$vid]) ? $settings['view_enabled'][$vid] : '',
+     );
+ 
++    $collapsed = !(isset($settings['view_displays'][$vid]) && count($settings['view_displays'][$vid]));
+     $view_displays_fieldset = array(
+       '#type' => 'fieldset',
+       '#title' => t('Displays'),
+-      '#collapsed' => !(is_array($settings['view_displays'][$vid]) && count($settings['view_displays'][$vid])),
++      '#collapsed' => $collapsed,
+       '#collapsible' => true
+     );
+ 
+     $view_displays_fieldset["view_displays_$vid"] = array(
+       '#type' => 'checkboxes',
+-      '#default_value' => ( $settings['view_displays'][$vid] ? $settings['view_displays'][$vid] : array() ),
++      '#default_value' => ( isset($settings['view_displays'][$vid]) ? $settings['view_displays'][$vid] : array() ),
+       '#options' => ( is_array($view_data->displays) ? $view_data->displays : array() ),
+     );
+ 
+     $view_displays_default = array(
+       '#type' => 'select',
+-      '#default_value' => ( $settings['view_displays_default'][$vid] ? $settings['view_displays_default'][$vid] : array() ),
++      '#default_value' => ( isset($settings['view_displays_default'][$vid]) ? $settings['view_displays_default'][$vid] : array() ),
+       '#options' => ( is_array($view_data->displays) ? array('' => '<None>') + $view_data->displays : array() ),
+     );
+ 
+@@ -359,7 +387,7 @@ $form['views'] = array(
+       '#type' => 'textfield',
+       '#size' => 1,
+       '#maxlength' => 4,
+-      '#default_value' => $settings['view_group_separator'][$vid],
++      '#default_value' => isset($settings['view_group_separator'][$vid]) ? $settings['view_group_separator'][$vid] : '',
+     );
+ 
+     $view_throbber = array(
+@@ -368,12 +396,12 @@ $form['views'] = array(
+     );
+ 
+     $form['views']['view_list']['view_enabled'][$vid]["view_enabled_$vid"] = $view_enabled;
+-    $form['views']['view_list']['view_name'][$vid]["view_name_$vid"] = array('#value' => $view->name);
++    $form['views']['view_list']['view_name'][$vid]["view_name_$vid"] = array('#markup' => $view->human_name);
+     $form['views']['view_list']['view_displays'][$vid]["view_displays_fieldset_$vid"] = $view_displays_fieldset;
+     $form['views']['view_list']['view_displays_default'][$vid]["view_displays_default_$vid"] = $view_displays_default;
+     $form['views']['view_list']['view_show_empty'][$vid]["view_show_empty_$vid"] = $view_show_empty;
+     $form['views']['view_list']['view_group_separator'][$vid]["view_group_separator_$vid"] = $view_group_separator;
+-    $form['views']['view_list']['edit_view'][$vid]["edit_view_$vid"] = array('#value' => l(t('edit'), "admin/build/views/edit/$vid", array('query' => array('destination' => $_GET['q']))));
++    $form['views']['view_list']['edit_view'][$vid]["edit_view_$vid"] = array('#markup' => l(t('edit'), "admin/structure/views/view/$vid/edit", array('query' => array('destination' => $_GET['q']))));
+     $form['views']['view_list']['view_throbber'][$vid]["view_throbber_$vid"] = $view_throbber;
+ 
+   }
+@@ -383,6 +411,13 @@ $form['views'] = array(
+     '#value' => t('Save settings')
+   );
+ 
++  $form['#attached'] = array(
++    'css' => array(
++      'type' => 'file',
++      'data' => drupal_add_css(drupal_get_path('module', 'viewsdisplaytabs') .'/viewsdisplaytabs.css'),
++    ),
++  );
++
+   return $form;
+ 
+ }
+@@ -453,12 +488,14 @@ function _viewsdisplaytabs_admin_submit($form, $form_state) {
+  * @return Object An object with keys view_name and display_name
+  */
+ function _viewsdisplaytabs_get_current_views_display_from_url() {
+-  if ($vdt = $_GET['vdt']) {
++  $vdt = isset($_GET['vdt']) ? $_GET['vdt'] : FALSE;
++  if ($vdt) {
+     $vdt = urldecode($vdt);
+     $elements = explode('|', $vdt);
++    $return = new stdClass();
+     $return->view_name = $elements[0];
+     $return->display_name = $elements[1];
+     return $return;
+   }
+   return false;
+-}
+\ No newline at end of file
++}

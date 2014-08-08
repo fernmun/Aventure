@@ -1,0 +1,5 @@
+name = Main Slider Block
+description = Block with the main slider.
+core = 7.x
+package = Aventure
+dependencies[] = nodequeue

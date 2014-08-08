@@ -1,0 +1,4 @@
+name = Aventure Countdown
+description = Countdown jquery effect
+core = 7.x
+package = Aventure

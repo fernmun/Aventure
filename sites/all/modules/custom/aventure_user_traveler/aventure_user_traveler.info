@@ -1,0 +1,4 @@
+name = Aventure traveler Zone User
+description = Zone user type traveler
+core = 7.x
+package = Aventure

@@ -1,0 +1,540 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"pat",
+				"path_to_image_big"
+			],
+			[
+				"pa",
+				"path_to_image_thumbnail"
+			],
+			[
+				"slide",
+				"slider_info"
+			],
+			[
+				"ima",
+				"image_info"
+			],
+			[
+				"node",
+				"node_wrapper"
+			],
+			[
+				"wa",
+				"wrappered_node"
+			],
+			[
+				"html",
+				"html_to_display"
+			],
+			[
+				"term",
+				"term_name"
+			],
+			[
+				"bott",
+				"bottom_right"
+			],
+			[
+				"for",
+				"form_state"
+			],
+			[
+				"con",
+				"constant"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"headsup",
+				"headsup_db"
+			],
+			[
+				"proje",
+				"project"
+			],
+			[
+				"projec",
+				"projectController"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 375.0,
+		"selected_items":
+		[
+			[
+				"ssr",
+				"Set Syntax: Ruby"
+			],
+			[
+				"ssru",
+				"Set Syntax: Ruby"
+			],
+			[
+				"ssp",
+				"Set Syntax: PHP"
+			],
+			[
+				"ssph",
+				"Set Syntax: PHP"
+			],
+			[
+				":q",
+				"BracketHighlighter: Swap Quotes"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				":w",
+				":w - Save"
+			],
+			[
+				"ss r",
+				"Set Syntax: Ruby"
+			],
+			[
+				"s sr",
+				"Set Syntax: Ruby"
+			],
+			[
+				" s s ru",
+				"Set Syntax: Ruby"
+			],
+			[
+				"ss ru",
+				"Set Syntax: Ruby"
+			],
+			[
+				"s s php",
+				"Set Syntax: PHP"
+			],
+			[
+				"ss xm",
+				"Set Syntax: XML"
+			],
+			[
+				"s s r",
+				"Set Syntax: Ruby"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 507.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_contact/aventure_contact.module",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_hoteles/aventure_hoteles.module",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_other_nodes_same_tag/aventure_other_nodes_same_tag.module",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/install.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/index.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/cron.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/phpinfo.php",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/profiles/headsup_profile/themes/custom/headsup_theme/templates/node--lesson.tpl.php",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/profiles/headsup_profile/themes/custom/headsup_theme/templates/node--question-answer.tpl.php",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/profiles/headsup_profile/themes/custom/headsup_theme/templates/node--quiz.tpl.php",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/example.make",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/php5-tools.sh",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/puppet/modules/apache/templates/module/proxy.conf.erb",
+		"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev/proxy_set.sh",
+		"/Users/johnnygamba/virtual_machines/centosChef/proxy_set.sh",
+		"/Users/johnnygamba/virtual_machines/centosChef/php5-tools.sh",
+		"/Users/johnnygamba/virtual_machines/centosChef/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/roles/lamp.rb",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/roles/php.rb",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/roles/base.rb",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/cookbooks/php/recipes/package.rb",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/cookbooks/php/recipes/default.rb",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/cookbooks/php/recipes/module_gd.rb",
+		"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/cookbooks/php/metadata.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/recipes/module_gd.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/recipes/default.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/metadata.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/recipes/source.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/templates/centos/php.ini.erb",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_sliders/js/aventure_sliders.js",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/template.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_view_modes/aventure_view_modes.module",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_view_modes/aventure_view_modes.info",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_libraries/aventure_libraries.module",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_mail_suscription/aventure_mail_suscription.info",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/package/package.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_sliders/aventure_sliders.module",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_mail_suscription/aventure_mail_suscription.module",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_sliders/aventure_sliders.info",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_libraries/aventure_libraries.info",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/default/settings.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/roles/lamp.rb",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/Boxfile",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/box",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/.gitignore",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/page.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/aventure_colombia.info",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/hotel/hotel.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/package/package.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/package/package.css",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/modules/custom/aventure_contact/aventure_contact.info",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/adminimal_theme/template.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/hotel/hotel.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/testimony/testimony.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/testimony/testimony.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/faq/faq.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/faq/faq.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/faq/faq.css",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/photo/photo.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/photo/photo.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/photo/event.css",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/photo/event.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/photo/event.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/link/link.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/link/link.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/event/event.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/event/event.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/hotel/hotel.css",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/links/link.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/team_member/team_member.inc",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/team_member/team-member.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/ds_layouts/team_member/team_member.css",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/css/generales.css",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/html.tpl.php",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/index.html",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/adminimal_theme/adminimal.info",
+		"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia/sites/all/themes/custom/aventure_colombia/css/foundation.css",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/README.md",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/recipes/module_apc.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/recipes/package.rb",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/themes/custom/first_theme/templates/node--article.tpl.php",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/themes/custom/first_theme/templates/page.tpl.php",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/themes/custom/first_theme/templates/html.tpl.php",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/themes/custom/first_theme/first_theme.info",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/themes/custom/first_theme/css/layout.css",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/themes/bartik/bartik.info",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/third_module/third_module.module",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/themes/garland/garland.info",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/third_module/third_module.info",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php/providers/pear.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/build/build.properties",
+		"/Users/johnnygamba/Downloads/INFOBAECMSR/puppet/infobae-dev.pp",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/second_module/css/second_module.css",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/second_module/js/second_module.js",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/second_module/second_module.module",
+		"/Users/johnnygamba/virtual_machines/2headsupscholastic/css/second_module.css",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/second_module/second_module.info",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/mi_primer_modulo/mi_primer_modulo.module",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/drupal_test_1/sites/all/modules/mi_primer_modulo/mi_primer_modulo.info",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/two_drupal_test/sites/all/modules/custom/mi_primer_modulo/mi_primer_modulo.info",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/two_drupal_test/sites/all/modules/custom/mi_primer_modulo/mi_primer_modulo.module",
+		"/Users/johnnygamba/virtual_machines/drupal_tests/public/two_drupal_test/sites/all/modules/contrib/field_group/field_group.info",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/roles/http_proxy_env.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/roles/mysql.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/roles/apache2.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/roles/base.rb",
+		"/Users/johnnygamba/virtual_machines/centosChef/chef/roles/php.rb",
+		"/Users/johnnygamba/virtual_machines/chefLamp/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/chef.headsup.scholastic.dev/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/2headsupscholastic/Vagrantfile",
+		"/Users/johnnygamba/Downloads/INFOBAECMSR/Vagrantfile",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/php/recipes/default.rb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/http_proxy_env/metadata.rb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/http_proxy_env/recipes/default.rb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/http_proxy_env/metadata.json",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/php/templates/centos/php.ini.erb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/apache2/definitions/apache_conf.rb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/apache2/definitions/apache_site.rb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/apache2/attributes/default.rb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/php/resources/pear_channel.rb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/apache2/templates/default/a2enmod.erb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/apache2/templates/default/a2dissite.erb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/apache2/templates/default/a2dismod.erb",
+		"/Users/johnnygamba/virtual_machines/pruebaChef/cookbooks/apache2/templates/default/apache2.conf.erb"
+	],
+	"find":
+	{
+		"height": 47.0
+	},
+	"find_in_files":
+	{
+		"height": 147.0,
+		"where_history":
+		[
+			"/Users/johnnygamba/virtual_machines/aventure_colombia/www/aventura-colombia",
+			"/Users/johnnygamba/virtual_machines/headsup.scholastic.dev",
+			"/Users/johnnygamba/Downloads/INFOBAECMSR/puppet",
+			"/Users/johnnygamba/virtual_machines/Vagrant-LAMP/chef/cookbooks/php",
+			"/Users/johnnygamba/virtual_machines/centosChef/chef/cookbooks/php",
+			"/Users/johnnygamba/virtual_machines/centosChef",
+			"/Users/johnnygamba/Downloads/INFOBAECMSR",
+			"/Users/johnnygamba/virtual_machines/centosChef",
+			"/Users/johnnygamba/Downloads/INFOBAECMSR",
+			"/Users/johnnygamba/virtual_machines/scholastic/puppet_modules"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"field_paq_img",
+			"field_paq_img_generica",
+			"generica",
+			"generiac",
+			"field_paquete_duracion",
+			"scholas",
+			"drush",
+			"proxy.corp",
+			"proxy",
+			"http_proxy",
+			"module_gd",
+			"gd",
+			"field_images",
+			"aventure_mail_suscription",
+			"get_service_icon_render",
+			"term",
+			"'localhost'",
+			");\n",
+			"my.proxy.com:8000",
+			"photo",
+			"link",
+			"similar_elements",
+			"xml",
+			"pkg",
+			"php_pear",
+			"header",
+			"php_pear \"XML_RPC\" do",
+			"proxy.corp",
+			"proxy",
+			"http_proxy",
+			"phpunit",
+			"apt",
+			"run",
+			"iloverandompasswordsbutthiswilldo",
+			"http_proxy",
+			"ENV['http_proxy']",
+			"http_proxy",
+			"standard",
+			"/www/",
+			"/www/headsup",
+			"site-install",
+			"include",
+			"*",
+			";",
+			".js",
+			"modernizr",
+			"initial_cost",
+			"body",
+			"page",
+			"Page",
+			"page",
+			"body",
+			"HomeController",
+			"on_save"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 51.0
+	},
+	"input":
+	{
+		"height": 47.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"settings",
+				"aventura-colombia/sites/default/settings.php"
+			],
+			[
+				"package.css",
+				"sites/all/themes/custom/aventure_colombia/ds_layouts/package/package.css"
+			],
+			[
+				"inde.php",
+				"index.php"
+			],
+			[
+				"page.t",
+				"sites/all/themes/custom/aventure_colombia/page.tpl.php"
+			],
+			[
+				"aventure_colombia",
+				"sites/all/themes/custom/aventure_colombia/aventure_colombia.info"
+			],
+			[
+				"aventure_",
+				"sites/all/modules/custom/aventure_contact/aventure_contact.info"
+			],
+			[
+				"thir",
+				"sites/all/modules/third_module/third_module.module"
+			],
+			[
+				"headsup.instal",
+				"profiles/headsup/headsup.install"
+			],
+			[
+				"stan",
+				"profiles/standard/standard.info"
+			],
+			[
+				"build.prope",
+				"build/build.properties"
+			],
+			[
+				"settings.php",
+				"scholastic/sites/default/settings.php"
+			],
+			[
+				"local.setting",
+				"parents.local/sites/default/local.settings.php"
+			],
+			[
+				"settings.pp",
+				"parents.local/sites/default/settings.php"
+			],
+			[
+				"aventure_co",
+				"sites/all/themes/custom/aventure_colombia/aventure_colombia.info"
+			],
+			[
+				"index.html",
+				"sites/all/themes/custom/aventure_colombia/index.html"
+			],
+			[
+				"aventure",
+				"sites/all/themes/custom/aventure_colombia/aventure_colombia.info"
+			],
+			[
+				"setting",
+				"sites/default/settings.php"
+			],
+			[
+				"basemo",
+				"app/models/BaseModel.php"
+			],
+			[
+				"routes.p",
+				"app/routes.php"
+			],
+			[
+				"routes.php",
+				"app/routes.php"
+			],
+			[
+				"projectcontrollertest",
+				"app/tests/controllers/ProjectControllerTest.php"
+			],
+			[
+				"hola.php",
+				"app/models/hola.php"
+			],
+			[
+				"route",
+				"app/routes.php"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"pr",
+				"/Users/johnnygamba/virtual_machines/pruebaChef/pruebachef.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 316.0,
+	"status_bar_visible": true
+}

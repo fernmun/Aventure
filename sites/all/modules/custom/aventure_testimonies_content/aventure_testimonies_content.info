@@ -1,0 +1,5 @@
+name = Aventure Testimonies Content
+description = Widgets for testimonies content
+core = 7.x
+version = 7.1.x
+package = Aventure

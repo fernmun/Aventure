@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * Implements hook_library().
+ */
+function aventure_share_images_library() {
+  $module_path = drupal_get_path('module', 'aventure_share_images');
+  $items = array();
+  $items['share-image'] = array(
+    'title' => t('share image'),
+    'version' => '1.0',
+    'js' => array(
+      $module_path . '/js/share-image.js' => array(),
+    ),
+  );
+
+  return $items;
+}
+
+
+/*
+ * Implementation of Hook_block_info()
+ */
+function aventure_share_images_block_info() {
+
+	$blocks['share_photo_block'] = array(
+		'info' => t('Aventure share photo block')
+	);
+
+  return $blocks;
+}
+
+/**
+ *  Implementation of hook_block_view().
+ */
+function aventure_share_images_block_view($delta = '') {
+    $block = NULL;
+
+	switch ($delta) {
+		case 'share_photo_block':
+			$block['subject'] = t('Aventure share photo block');
+			$node = menu_get_object();
+      // Check if node exists
+      if (!empty($node) && isset($node)) {
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $licence = $node_wrapper->field_licencia->value()->name;
+        // Check if the image has copyright to don't allow to share it
+        if ($licence != "Copyright") {
+          $renderable_array = aventure_share_images_get_block($node_wrapper);
+          $block['content'] = render($renderable_array);
+        }
+      }            
+			break;
+	}
+
+	return $block;
+}
+
+/**
+ *  Implementation of hook_theme().
+ */
+function aventure_share_images_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_share_photo' => array(
+      'variables' => array(),
+      'template' => 'aventure_share_photo',
+      'path' => $path . '/templates',
+    ),
+  );
+}
+
+function aventure_share_images_get_block($node) {
+
+  // All image size styles available
+  $image_styles = array(
+    '561x372' => NULL, 
+    '271x182' => NULL, 
+    '174x132' => NULL
+  );
+
+  // Size vs image style
+  $image_size = array(
+    '561x372' => t('Big'),
+    '271x182' => t('Medium'),
+    '174x132' => t('Small'),
+  );
+
+  // Get all images styles url
+  foreach ($image_styles as $key => $value) {
+    $image = $node->field_imagen->value();
+    $image_styles[$key] = image_style_url($key, $image['uri']);
+  }
+
+	$render['open_wrapper'] = array(
+    '#prefix' => '<div class="share-image">',
+  );
+
+	$render['fotografia-' . $node->nid->value()] = array(
+      '#markup' => theme('aventure_share_photo', array(
+        'title' => $node->title->value(),
+        'image_styles' => $image_styles,
+        'image_size' => $image_size,
+        'embed_codes' => $embed_codes
+      )
+    )
+  );
+
+  $render['end_wrapper'] = array(
+    '#suffix' => '</div>',
+  );
+
+  $render['#attached']['library'][] = array('aventure_share_images' , 'share-image');
+
+  return $render;
+}
+

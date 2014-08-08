@@ -1,0 +1,4 @@
+name = Aventure Hotels
+description = Hotels hacks
+core = 7.x
+package = Aventure

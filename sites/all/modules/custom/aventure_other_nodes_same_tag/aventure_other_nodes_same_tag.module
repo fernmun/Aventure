@@ -1,0 +1,315 @@
+<?php
+
+function aventure_other_nodes_same_tag_block_info() {
+  $blocks = array();
+
+  $blocks['other_hotels'] = array(
+    'info' => 'Other Hotels',
+  );
+
+  $blocks['other_pics'] = array(
+    'info' => 'Other pics related'
+  );
+
+  $blocks['more_travel_packages'] = array(
+    'info' => 'More travel packages'
+  );
+
+  $blocks['testimonies_in_packages'] = array(
+    'info' => 'Testimonies in packages',
+  );
+
+  return $blocks;
+}
+
+function aventure_other_nodes_same_tag_block_view($delta) {
+  $block = array();
+  switch ($delta) {
+    case 'other_hotels':
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node) && isset($node)) {
+        $block['subject'] = t('Other Hotels');
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $renderable_array = other_nodes_same_tag_html($node_wrapper, 'hotel', 'field_lugar');
+        $block['content'] = render($renderable_array);
+      }
+      else {
+        $block['content'] = NULL;
+      }
+      break;
+    case 'other_pics':
+      $block['subject'] = t('Other pics related');
+      $node = menu_get_object();
+      // Check if node exists
+      if (!empty($node) && isset($node)) {
+        $node_wrapper = entity_metadata_wrapper('node', $node);
+        $renderable_array = other_nodes_same_tag_html($node_wrapper, 'fotografia', 'field_lugar');
+      }      
+      $block['content'] = render($renderable_array);
+      break;
+    case 'more_travel_packages':
+      $block['subject'] = t('More packages');
+      $node = menu_get_object();
+      $more_packages = html_more_packages($node->nid);
+      $block['content'] = render($more_packages);
+      break;
+    case 'testimonies_in_packages':
+      $block['subject'] = t('Testimonies in packages');
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      if (isset($node->field_lugares_multiples[LANGUAGE_NONE])) {
+        $terms = aventure_search_testimonies($node->field_lugares_multiples[LANGUAGE_NONE]);
+        if ($terms) {
+          $testimonies_in_packages = html_testimonies_in_packages($terms);
+          $block['content'] = render($testimonies_in_packages);
+        }
+      }
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Function aventure searh testimonies
+ */
+function aventure_search_testimonies($terms) {
+  $array_term = array();
+  foreach ($terms as $key => $value) {
+    $array_term[] = $value['tid'];
+  }
+  $query = new EntityFieldQuery();
+  $result = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'testimony')
+    ->fieldCondition('field_lugar', 'tid', $array_term)
+    ->execute();
+  if (isset($result['node']))
+    return $result['node'];
+  else
+    return FALSE;
+  }
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_other_nodes_same_tag_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_preview_hotels_same_tag' => array(
+      'variables' => array(),
+      'template' => 'aventure_preview_hotels_same_tag',
+      'path' => $path . '/templates',
+    ),
+    'aventure_preview_pics_same_tag' => array(
+      'variables' => array(),
+      'template' => 'aventure_preview_pics_same_tag',
+      'path' => $path . '/templates',
+    ),
+    'aventure_more_package_item' => array(
+      'variables' => array(),
+      'template' => 'aventure_more_package_item',
+      'path' => $path . '/templates',
+    ),
+    'testimony_in_packages' => array(
+      'variables' => array(),
+      'template' => 'testimony_in_packages',
+      'path' => $path . '/templates',
+    ),
+  );
+}
+
+function other_nodes_same_tag_html($node_wrapper, $bundle, $field) {
+  $render = array();
+  $lang = null;
+  $render['open_wrapper'] = array(
+    '#prefix' => '<div class="same_' . $bundle . 's">',
+  );
+
+  global $language;
+  $lang = $language->language;
+  
+  if ($bundle == 'hotel') {
+    $place = $node_wrapper->field_lugar->tid->value();
+    $place_term = taxonomy_term_load($place);
+    $render['title_others'] = array(
+      '#markup' => "<h3>" . t('Others hotels close to this @place',
+        array('@place' => $place_term->name)) . "</h3>",
+    );
+  }
+
+  $nodes = get_nodes_same_tag($node_wrapper, $bundle, $field, $lang); 
+
+  foreach ($nodes as $node) {
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+
+    switch ($bundle) {
+      case 'hotel':
+        $first_hotel_image = NULL;
+        $first_hotel_image =
+          $node_wrapper->field_field_paq_img_generica->value();
+
+        $path_to_image_thumbnail = image_style_url('271x182', $first_hotel_image['uri']);
+        $link_to_node = drupal_get_path_alias('node/' . $node_wrapper->nid->value());
+        $node_image = l(theme_image(array('path' => $path_to_image_thumbnail)), 
+                        'node/' . $node_wrapper->nid->value(), array('html' => true));
+        $node_name = $node_wrapper->title->value();
+        $place_term =
+          taxonomy_term_load($node_wrapper->field_lugar->tid->value());
+
+        $place = get_full_taxonomy_family_separated_by_commas($place_term->tid, $place_term->name);
+
+        $render['hotel-' . $node_wrapper->nid->value()] = array(
+          '#markup' => theme('aventure_preview_hotels_same_tag', array(
+              'link_to_node' => l($node_name, $link_to_node),
+              'node_image' => $node_image,
+              'node_name' => $node_name,
+              'place' => $place,
+            )
+          )
+        );
+        break;
+
+      case 'fotografia':
+        $photo_image = $node_wrapper->field_imagen->value();
+        $path_to_image_style = image_style_url('78x78', $photo_image['uri']);
+
+        $node_image = theme_image(array('path' => $path_to_image_style));
+        $node_name = $node_wrapper->title->value();
+
+        $node_image_link = l($node_image, 'node/' . $node_wrapper->nid->value(), array(
+                'html' => TRUE,
+                'attributes' => array(
+                  'title' => $node_name
+                )
+              )
+            );
+
+        $render['photo-' . $node_wrapper->nid->value()] = array(
+          '#markup' => theme('aventure_preview_pics_same_tag', array(
+              'node_image_link' => $node_image_link
+            )
+          )
+        );
+        break;
+    }
+  }
+
+  $render['end_wrapper'] = array(
+    '#suffix' => '</div>',
+  );
+  
+  return $render;
+}
+
+function get_nodes_same_tag($node_wrapper, $bundle, $field, $language = null) {
+
+  switch ($bundle) {
+    case 'hotel':
+    case 'testimony':
+      if (!empty($node_wrapper)) {
+        $tid = $node_wrapper->field_lugar->value()->tid;
+      }      
+      break;
+
+    case 'fotografia':
+      if (!empty($node_wrapper)) {
+        $tid = $node_wrapper->field_lugar->value()->tid;
+      }      
+      break;
+  }
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $bundle)
+    ->propertyCondition('status', 1)
+    ->propertyCondition('nid', $node_wrapper->nid->value(), '!=')
+    ->fieldCondition($field, 'tid', $tid)
+    ->range(0, 3);
+
+  if (!is_null($language)) {
+    $query->propertyCondition('language', $language);
+  }
+
+  $result = $query->execute();
+  $nodes = array();
+
+  if (isset($result['node'])) {
+    $nids = array_keys($result['node']);
+    $nodes = entity_load('node', $nids);
+  }
+  return $nodes;
+}
+
+function html_more_packages($nid) {
+  $render = array();
+  $render['more_pqg_title'] = array(
+    '#markup' => "<div class='title-package'>" . t('More travel packages') .
+      '</div>',
+  );
+
+  $render['more_pqg_subtitle'] = array(
+    '#markup' => "<div class='subtitle-package'>"
+      . t('Check out more interesting packages ...') . '</div>',
+  );
+
+  global $language;
+  $packages = node_load_multiple(get_random_packages($nid, $language->language));
+  foreach ($packages as $package) {
+    $node_wrapper = entity_metadata_wrapper('node', $package);
+    $image_info = $node_wrapper->field_field_paq_img_generica->value();
+    $path_to_image_thumbnail = image_style_url('175x175', $image_info['uri']);
+
+    $render['package-' . $package->nid] = array(
+      '#markup' => theme('aventure_more_package_item', array(
+        'node_image' => theme_image(array('path' => $path_to_image_thumbnail)),
+        'link_to_node' => l($node_wrapper->title->value(),
+          'node/' . $node_wrapper->nid->value()),
+      )),
+    );
+  }
+
+  return $render;
+}
+
+function get_random_packages($nid, $language) {
+  $query = new EntityFieldQuery();
+  $nodes = $query->entityCondition('entity_type', 'node')
+            ->entityCondition('bundle', 'paquete')
+            ->propertyCondition('status', 1)
+            ->propertyCondition('nid', $nid, '!=')
+            ->propertyCondition('language', $language)
+            ->range(0, 3)
+            ->execute();
+
+  $nids = array();
+  if (isset($nodes['node'])) {
+    $nids = array_keys($nodes['node']);
+  }
+
+  return $nids;
+}
+
+function html_testimonies_in_packages($nodes_same_tag) {
+  $render = array();
+  foreach ($nodes_same_tag as $node) {
+    $node = current($node);
+    $node = node_load($node);
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+    $user = user_load($node->uid);    
+    $image_info = $user->picture->uri;
+    $path_to_image_thumbnail = image_style_url('78x78', $image_info);
+    $html = theme('testimony_in_packages', array(
+      'nid' => $node_wrapper->nid->value(),
+      'image' => theme('image', array('path' => $path_to_image_thumbnail, 'attributes' => array('class' => 'packages-testimony-image'))),
+      'title' => '<div class="packages-testimony-title">' . $node_wrapper->title->value() . '</div>',
+      'name' => $user->field_user_name[LANGUAGE_NONE][0]['value'],
+      'phrase' => l($node_wrapper->field_highlighted_phrase->value(), 'node/' . $node_wrapper->nid->value(), array('attributes' => array('class' => 'phrase'))),
+    ));
+    $render['node-' . $node_wrapper->nid->value()] = array(
+      '#markup' => $html,
+    );
+  }
+
+  $render['#prefix'] = '<div class="testimony-package-wrapper">';
+  $render['#suffix'] = '</div>';
+  return $render;
+}

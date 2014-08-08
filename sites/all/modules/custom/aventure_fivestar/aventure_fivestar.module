@@ -1,0 +1,12 @@
+<?php
+
+function aventure_fivestar_fivestar_widgets() {
+  // Letting fivestar know about my Cool and Awesome Stars.
+  $widgets = array(
+    drupal_get_path('module', ' aventure_fivestar') . '/widget/aventure_stars.css' => 'aventure_stars'
+  );
+
+  //var_dump($widgets);
+
+  return $widgets;
+}

@@ -1,0 +1,48 @@
+.ui-tabs-vertical { width: 55em; }
+.ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
+.ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+.ui-tabs-vertical .ui-tabs-nav li a { display: block; font-size: 16px; font-weight: 500 !important;}
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
+.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+
+.field-name-discount-20{
+  float: right;
+  width: 50%;
+}
+.field-name-coundown {
+  float: left;
+  width: 50%;
+}
+ .ds-medium-top-paquete .field-name-body{
+  margin-right: 2.5%;
+  float: left;
+  width: 45%;
+ }
+.field-name-strong-points{
+  margin-right: 2.5%;
+  margin-left: 5%;
+  float: right;
+  width: 45%;
+}
+#tabs .large-12{
+  padding: 0;
+}
+.ui-tabs-vertical .ui-tabs-panel{
+  float: left;
+  width: 880px;
+}
+.ui-tabs-vertical .ui-tabs-nav{
+  padding: 0;
+}
+.hidden {
+  display: none;
+}
+.field-name-make-package-reservation {
+  float: left;
+  margin-right: 1%;
+  width: 36%;
+}
+.field-name-more-packages{
+  float: right;
+  width: 60%;
+}

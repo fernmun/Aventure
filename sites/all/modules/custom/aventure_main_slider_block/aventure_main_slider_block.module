@@ -1,0 +1,150 @@
+<?php
+
+/*
+ * Implements hook_block_info().
+ */
+function aventure_main_slider_block_block_info() {
+  $blocks = array();
+
+  $blocks['main_slider_package'] = array(
+    'info' => t('Main Slider Block package')
+  );
+
+  $blocks['main_slider_home'] = array(
+    'info' => t('Main Slider Block home')
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function aventure_main_slider_block_block_view($delta) {
+  $block = array();
+
+  switch ($delta) {
+    case 'main_slider_package':
+      $block['subject'] = t('Main Slider');
+      $node = menu_get_object();
+      $node_wrapper = entity_metadata_wrapper('node', $node);
+      $renderable_array = main_slider_content($node_wrapper);
+      $block['content'] = render($renderable_array);
+      break;
+
+    case 'main_slider_home':
+      $block['subject'] = t('Main Slider Home');
+      $renderable_array = main_slider_content();
+      $block['content'] = render($renderable_array);
+      break;
+  }
+
+  return $block;
+}
+
+function main_slider_content($node_wrapper = null) {
+  // If it is null then it is a block for the home page.
+
+  if (is_null($node_wrapper)) {
+    $nodes_to_display = nodequeue_load_nodes(variable_get('qid_for_home_slider', 0));
+  }
+  else {
+    $nodes_to_display = load_imagen_destacada_nodes_in_package($node_wrapper);
+  }
+
+  $render = array();
+  $render['#attached']['css'] = array(
+    drupal_get_path('module', 'aventure_main_slider_block') . '/css/aventure_main_slider_block.css',
+  );
+
+  $render['opening_wrapper'] = array(
+    '#prefix' => '<div class="flexslider_main_content"> <ul class="slides">',
+  );
+
+  global $language;
+  foreach ($nodes_to_display as $every_imagen_destacada_node) {
+    if ($every_imagen_destacada_node->language != $language->language && isset($every_imagen_destacada_node)) continue;
+    $every_imagen_destacada_node = entity_metadata_wrapper('node', $every_imagen_destacada_node);
+    $image = $every_imagen_destacada_node->field_imagen_destacada->value();
+    $title = $every_imagen_destacada_node->title->value();
+    $subtitle = $every_imagen_destacada_node->field_subtitulo->value();
+    $phrase = $every_imagen_destacada_node->body->value();
+    $price = $every_imagen_destacada_node->field_destacada_precio->value();
+
+    $path_to_image = image_style_url('height_750px', $image['uri']);
+
+    $link = aventure_search_link_relacionado($every_imagen_destacada_node->vid->value());
+    if ($link) {
+      $title = l($title, $link);
+      $subtitle = l($subtitle, $link);
+    }
+    $html = theme('aventure_main_slider_image', array(
+      'nid' => $every_imagen_destacada_node->nid,
+      'image' => theme('image', array('path' => $path_to_image)),
+      'title' => $title,
+      'subtitle' => $subtitle,
+      'phrase' => $phrase['value'],
+      'price' => t('From:') . ' ' . $price . ' USD',
+    ));
+
+    $render['image-destacada-' . $every_imagen_destacada_node->nid->value()] = array(
+      '#markup' => $html,
+    );
+  }
+
+  $render['closing_wrapper'] = array(
+    '#suffix' => '</ul> </div>',
+  );
+
+  $render['#attached']['library'][] = array('aventure_libraries' , 'flexslider');
+  $render['#attached']['js'] = array(
+    drupal_get_path('module', 'aventure_main_slider_block') . '/js/aventure_main_slider_block.js',
+  );
+
+  return $render;
+}
+
+function aventure_search_link_relacionado($vid) {
+  $result = db_select('field_data_field_contenido_img_destacada', 'n')
+    ->fields('n')
+    ->condition('bundle', 'paquete','=')
+    ->condition('field_contenido_img_destacada_target_id', $vid,'=')
+    ->execute()
+    ->fetchAssoc();
+  if ($result != NULL) {
+    $path = drupal_get_path_alias('node/' . $result['entity_id']);
+    return $path;
+  }
+  else {
+    return FALSE;
+  }
+}
+
+function load_imagen_destacada_nodes_in_package($node_wrapper) {
+  $imagen_destacada_nids = array();
+
+  if (is_object($node_wrapper->field_contenido_img_destacada->value())) {
+    $imagen_destacada = $node_wrapper->field_contenido_img_destacada->value();
+    $imagen_destacada_nids[] = $imagen_destacada->nid;
+  }
+  else {
+    foreach ($node_wrapper->field_contenido_img_destacada->value() as $every_imagen_destacada) {
+      $imagen_destacada_nids[] = $every_imagen_destacada->nid;
+    }
+  }
+
+  return node_load_multiple($imagen_destacada_nids);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function aventure_main_slider_block_theme($cache, $type, $theme, $path) {
+  return array(
+    'aventure_main_slider_image' => array(
+      'variables' => array(),
+      'template' => 'aventure_main_slider_image',
+      'path' => $path . '/templates',
+    ),
+  );
+}

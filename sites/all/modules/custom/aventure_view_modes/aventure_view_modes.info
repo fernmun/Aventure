@@ -1,0 +1,4 @@
+name = View Modes Customizations
+description = Alterations to the view modes.
+package = Aventure
+core = 7.x

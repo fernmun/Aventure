@@ -1,0 +1,36 @@
+name = Aventure Colombia
+description = Main theme for the site
+core = 7.x
+
+
+stylesheets[all][] = css/foundation.css
+stylesheets[all][] = css/fonts.css
+stylesheets[all][] = css/font-awesome-ie7.css
+stylesheets[all][] = css/generales.css
+stylesheets[all][] = css/style.css
+stylesheets[all][] = css/forms.css
+stylesheets[all][] = css/front.css
+stylesheets[all][] = css/hacks.css
+scripts[] = js/vendor/custom.modernizr.js
+scripts[] =js/foundation.min.js
+
+regions[slider_destacado] = Slider Destacado
+regions[type_of_travel] = Type of travel
+regions[medium] = Medium
+regions[block_map_region] = Map Region
+regions[traveled_with_us_agency] = Traveled With Our Agency Block
+regions[question_about_trip_home] = Question about the trip
+regions[meet_our_agency] = Meet Our Agency
+regions[mail] = Mail
+regions[language_dropdown] = Language DropDown
+regions[secondary_menu] = Secondary menu
+regions[menu_bar] = Menu bar
+regions[content] = Content
+regions[foot_contact_info] = Pie - Información de contacto
+regions[foot_contact_form] = Pie - Formulario de contacto
+regions[foot_links_package] = Pie - Links internos package
+regions[foot_links_place] = Pie - Links internos place
+regions[foot_post_foot] = Post - footer
+regions[foot_copyright] = Copyright - footer
+settings[clear_registry] = 0
+

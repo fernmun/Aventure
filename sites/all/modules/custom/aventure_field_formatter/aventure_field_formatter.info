@@ -1,0 +1,7 @@
+name = Aventure Field Formatter
+description = A custom module to make field fomatters
+package = Aventure
+version = "7.x-1."
+core = "7.x"
+
+dependencies[] = term_reference_tree

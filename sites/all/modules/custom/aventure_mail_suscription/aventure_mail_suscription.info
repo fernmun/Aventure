@@ -1,0 +1,4 @@
+name = Aventure Mail Suscription
+description = Manage the mail suscription to site.
+package = Aventure
+core = 7.x
