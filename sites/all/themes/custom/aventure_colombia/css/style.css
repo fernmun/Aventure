@@ -2,6 +2,11 @@ a {
   color: #265AFF;
 }
 
+form {
+  width:50%;
+  margin:0 auto;
+}
+
 /*---------------- HEADER ----------------*/
 #comments .comment {
   overflow: hidden;
@@ -3815,4 +3820,9 @@ div.fivestar-widget-static .star span.off {
 span.bubble.selection.ng-binding {
   position: absolute;
   margin-top: 7.3em;
+}
+.tabs {
+  margin:0 auto;
+  width:50%;
+  margin-top:1em;
 }
